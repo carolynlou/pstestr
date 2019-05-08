@@ -19,7 +19,13 @@
 #' @param betasp indicator of presence of spatial information, defaults to TRUE
 #' @param rs investigator-specified set of "contrasts" of G, defaults to c(10, 20, 50)
 #' @param mc.cores number of cores to run simulation on
-#'
+#' @import parallel
+#' @import foreach
+#' @importFrom doParallel registerDoParallel
+#' @importFrom stats ecdf glm lm model.matrix optim pchisq predict quantile rbinom resid rnorm
+#' @importFrom utils capture.output
+#' @importFrom mvtnorm qmvnorm
+#' @importFrom iterators icount
 #' @return A list of the entire matrix of simulation results, the power results, and "out"
 #' @keywords projected score test
 #' @export
@@ -66,9 +72,9 @@ pstest = function(n = 100, p = 1000, model = 'normal',
 
 
   #parallelize the simulations
-  cl = parallel::makeCluster(mc.cores)
-  doParallel::registerDoParallel()
-  r = foreach::foreach(icount(nsim), .combine = rbind) %dopar% {
+  cl = makeCluster(mc.cores)
+  registerDoParallel()
+  r = foreach(icount(nsim), .combine = rbind) %dopar% {
       if(tolower(model)=='normal'){
       # Simulate Y under no covariates
       Y = Gprime %*% beta + rnorm(n, 0, sigma)

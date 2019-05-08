@@ -7,7 +7,6 @@
 #' @import AssotesteR
 #' @import abind
 #' @import quantreg
-#' @import doParallel
 #'
 
 
@@ -27,13 +26,16 @@
 #library(SKAT)
 
 
-# Rayleigh Quotient
-# function to estimate alpha vector
-# This optimizes a Rayleigh quotient which is the solution
-# to a generalized eigenvalue problem. alpha is the first
-# eigenvector.
+#' @title Rayleigh Quotient
+#' @description function to estimate alpha vector
+#' This optimizes a Rayleigh quotient which is the solution
+#' to a generalized eigenvalue problem. alpha is the first
+#' eigenvector.
+#' @param u some matrix
+#' @param v some matrix
+#' @param par nonzero vector x
 
-rayleigh.opt <- function(u=NULL, v=NULL, par=NULL) {
+rayleigh.opt <- function(u, v, par) {
   (t(par) %*% u %*% par)/(t(par) %*% v %*% par)
 }
 

@@ -17,4 +17,6 @@ Imports:
     abind,
     geigen,
     quantreg,
-    splines
+    splines, doParallel, parallel, foreach, mvtnorm, iterators
+Suggests: knitr, rmarkdown
+VignetteBuilder: knitr
