@@ -1,19 +1,37 @@
 #' Performs power analysis for the projected score test under a single alternative hypothesis
+#' simulation under a few alternative hypotheses
+#' This is an indep function which calls setup from maxsum_altsim_setup.R,
+#' which sets up all of the variables needed for one value of kperc, percentage of independent variables with nonzero signal
+#' and one value of mbeta, mean coefficient for non zero effects uniform around that value
+#' That script loops through the variable k and beta
+#'
+#' @param n Defaults to 100
+#' @param p Defaults to 1000
+#' @param model Can be specified as 'normal' (default) for linear regression, otherwise does logistic regression
+#' @param sigma Defaults to 1
+#' @param nsim Defaults to 500
+#' @param alpha significance level, Defaults to 0.05
+#' @param seed set a seed for the power calculation. defaults to 2019
+#' @param mbeta mean coefficient for nonzero effects, defaults to 0
+#' @param kperc percentage of independent variables with nonzero signal, defaults to 40
+#' @param rho spatial correlation in G parameter, AR1 structure. defaults to 0.9
+#' @param betasp indicator of presence of spatial information. defaults to TRUE
+#' @param rs Investigator specified set of "contrasts" of G. defaults to c(10, 20, 50)
+#' @keywords projected score test
+#'
+#' @export
 #'
 
 
-# simulation under a few alternative hypotheses
-# This is an indep function which calls setup from maxsum_altsim_setup.R,
-# which sets up all of the variables needed for one value of k, percentage of independent variables with nonzero signal
-# and one value of mbeta, mean coefficient for non zero effects uniform around that value
-# That script loops through the variable k and beta
 
 
-pstest = function(n = 100, p = 1000, model = 'normal', sigma = 1, nsim = 200, alpha = 0.05, seed = 2019,
-                  mbetas = c(0, 0.05, 0.01, 0.015, 0.02, 0.025, 0.03, 0.035, 0.04, 0.045, 0.05, 0.06,  0.07, 0.08, 0.09, 0.1),
-                  ks = c(40, 60, 70, 80, 100),
+
+pstest = function(n = 100, p = 1000, model = 'normal',
+                  sigma = 1, nsim = 500, alpha = 0.05, seed = 2019,
+                  mbeta = 0, #mean bet
+                  kperc = 40, #current k
                   rho = 0.9,
-                  betasp = 1,
+                  betasp = TRUE,
                   rs = c(10, 20, 50)){
 
   sobj = setup() #create setup file with params specified in main function
@@ -32,20 +50,18 @@ pstest = function(n = 100, p = 1000, model = 'normal', sigma = 1, nsim = 200, al
   linkatlambda = sobj$linkatlambda
 
 
-
-  mbeta = mbetas[]
   dir.create('power_results', showWarnings = FALSE)
-  powout = sub('setup_', '', sub('.rdata', paste('_k', curk, '_mbeta', mbeta, '_betasp', betasp, '.rdata', sep=''), sub('power_files', 'power_results', setupfile) ) )
+  powout = sub('setup_', '', sub('.rdata', paste('_k', kperc, '_mbeta', mbeta, '_betasp', betasp, '.rdata', sep=''), sub('power_files', 'power_results', setupfile) ) )
 
-  betas = seq(0, mbeta, length.out=curk/2+1)[-1]
+  betas = seq(0, mbeta, length.out=kperc/2+1)[-1]
 
   # spatial information
   if(betasp){
-  	beta = c(rep(0,curk), -1*betas, rep(0, curk*5), betas,  rep(0, p-curk*7) )
+  	beta = c(rep(0,kperc), -1*betas, rep(0, kperc*5), betas,  rep(0, p-kperc*7) )
   # no spatial information (besides correlation amongst indep variables)
   } else {
   	beta = rep(0, p)
-  	beta[round(seq(10, 990, length.out=curk))] = c(betas, betas) * c(-1, -1, 1, 1, -1,  1)
+  	beta[round(seq(10, 990, length.out=kperc))] = c(betas, betas) * c(-1, -1, 1, 1, -1,  1)
   }
 
 
@@ -139,7 +155,7 @@ pstest = function(n = 100, p = 1000, model = 'normal', sigma = 1, nsim = 200, al
   }
 
   simresults = as.data.frame(simresults)
-  powresults[1,] = c(colMeans(simresults[,grep('_pvalue$', nams)]<=alpha, na.rm = T), curk, mbeta)
+  powresults[1,] = c(colMeans(simresults[,grep('_pvalue$', nams)]<=alpha, na.rm = T), kperc, mbeta)
   powresults = as.data.frame(powresults)
   return(list=c('simresults', 'powresults', 'out'))
 

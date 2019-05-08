@@ -1,23 +1,32 @@
+#' Collection of helper functions for main simulation
+#'
+#' @import CompQuadForm
+#' @import splines
+#' @import aSPU
+#' @import geigen
+#' @import AssotesteR
+#' @import abind
+#' @import quantreg
+
+
+
+
+
+
 # FUNCTIONS FOR MAXKAT TEST
 #library(pracma) # for repmat
-library(CompQuadForm) # for LC of chi-squareds
-library(splines)
-library(aSPU)
-library(geigen)
-library(AssotesteR)
-library(abind)
-library(quantreg)
+
+# library(CompQuadForm) # for LC of chi-squareds
+# library(splines)
+# library(aSPU)
+# library(geigen)
+# library(AssotesteR)
+# library(abind)
+# library(quantreg)
+
 #library(rARPACK)
 #library(microbenchmark)
 #library(SKAT)
-
-### NOT FUNCTIONS, JUST USEFUL
-# lh = read.table('/project/taki/AD/ADNI_FS/subjects/fsaverage5/surf/lh.thickness.asc', header=FALSE, col.names=c('vid', 'x', 'y', 'z','pc') )
-# lh$pc = 0
-# lh.sphere = '/project/taki/AD/ADNI_FS/subjects/fsaverage5/surf/lh.sphere'
-# rh = read.table('/project/taki/AD/ADNI_FS/subjects/fsaverage5/surf/rh.thickness.asc', header=FALSE, col.names=c('vid', 'x', 'y', 'z','pc'))
-# rh$pc = 0
-# rh.sphere = '/project/taki/AD/ADNI_FS/subjects/fsaverage5/surf/rh.sphere'
 
 
 # function to estimate alpha vector
@@ -28,7 +37,7 @@ rayleigh.opt <- function(u=NULL, v=NULL, par=NULL) {
   (t(par) %*% u %*% par)/(t(par) %*% v %*% par)
 }
 
-# sums the p^2 nXn sub-blocks of an 
+# sums the p^2 nXn sub-blocks of an
 # npXnp projection matrix
 sumProj <- function(P, n, p){
   out = matrix(0, n, n)
@@ -41,11 +50,11 @@ sumProj <- function(P, n, p){
   out
 }
 
-# sums the p^2 nXn sub-blocks of an 
+# sums the p^2 nXn sub-blocks of an
 # npXnp projection matrix by summing the
 # outer product of the underlying orthogonal
 # basis vectors. This is the slowest step.
-# sums the p^2 nXn sub-blocks of an 
+# sums the p^2 nXn sub-blocks of an
 # npXnp projection matrix by summing the
 # outer product of the underlying orthogonal
 # basis vectors.
