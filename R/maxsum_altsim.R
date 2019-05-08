@@ -1,10 +1,9 @@
-#' Performs power analysis for the projected score test under a single alternative hypothesis
-#' simulation under a few alternative hypotheses
+#' Performs the power analysis for the projected score test
 #'
-#' @description This is an indep function which calls setup from maxsum_altsim_setup.R,
+#' @description This is an independent function which calls setup from maxsum_altsim_setup.R,
 #' which sets up all of the variables needed for one value of kperc, percentage of independent variables with nonzero signal
 #' and one value of mbeta, mean coefficient for non zero effects uniform around that value
-#' That script loops through the variable k and beta
+#' That function loops through the variables k and beta.
 #'
 #' @param n defaults to 100
 #' @param p defaults to 1000

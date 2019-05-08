@@ -1,5 +1,6 @@
-#' Sets up necessary parameters for simulation
-#'
+#' Sets up necessary parameters for power calculation simulation
+#' @description Support function for maxsum_altsim, which supports maxsum_simulations. Sets
+#' up objects needed to do power calculation. Not modifiable by user.
 #'
 #' @param n defaults to 100
 #' @param p defaults to 1000
@@ -11,15 +12,16 @@
 #' @param rho spatial correlation in G parameter, AR1 structure, defaults to 0.9
 #' @param betasp indicator of presence of spatial information, defaults to TRUE
 #' @param rs investigator-specified set of "contrasts" of G, defaults to c(10, 20, 50)
+#' @return A list including spatial correlation parameters, empty dataframes for simresults
+#'  and powresults, parameters for distribution of SKAT statistic
 
-#### THINGS THAT ARE FIXED ####
-# fixed design
-# might have to center
-# consider using spatially correlated variables
-sim_setup = function(n = 100, p = 1000, model = 'normal', sigma = 1, nsim = 200, alpha = 0.05, seed = 2019,
-                 rho = 0.9,
-                 betasp = 1,
-                 rs = c(10, 20, 50)){
+
+sim_setup = function(n = 100, p = 1000,
+                     model = 'normal',
+                     sigma = 1, nsim = 200,
+                     alpha = 0.05, seed = 2019,
+                     rho = 0.9, betasp = 1,
+                     rs = c(10, 20, 50)){
 
   set.seed(seed)
   Gprime = matrix(rnorm(n*p), n, p)
@@ -47,33 +49,29 @@ sim_setup = function(n = 100, p = 1000, model = 'normal', sigma = 1, nsim = 200,
   # don't need these anymore
   rm(contrasts, contrasts2)
 
-  # save out objects we will use
-  dir.create('power_files', showWarnings = FALSE)
-  setupfile = paste('power_files/setup_n', n, '_p', p, '_model', model, '_sigma', sigma, '_nsim', nsim, '_alpha', alpha, '_rho', rho, '_seed', seed, '.rdata', sep='' )
-
-    #### empty simulation results matrix ####
-    R1nams = paste(paste('Rspline', rs, sep='_'), rep(c('', '_pvalue'), each=length(rs)), sep='' )
-    R2nams = paste(paste('Rcov', rs, sep='_'), rep(c('', '_pvalue'), each=length(rs)), sep='' )
-    nams = c(R1nams, R2nams, 'aSPU', 'aSPU_pvalue', 'SKAT', 'SKAT_pvalue', 'Sum', 'Sum_pvalue')
-    # 'SKAT', 'SKAT_pvalue', # same as SPU2
-    simresults = matrix(NA, nrow=nsim, ncol=length(nams), dimnames=list(NULL, nams))
+  #### empty simulation results matrix ####
+  R1nams = paste(paste('Rspline', rs, sep='_'), rep(c('', '_pvalue'), each=length(rs)), sep='' )
+  R2nams = paste(paste('Rcov', rs, sep='_'), rep(c('', '_pvalue'), each=length(rs)), sep='' )
+  nams = c(R1nams, R2nams, 'aSPU', 'aSPU_pvalue', 'SKAT', 'SKAT_pvalue', 'Sum', 'Sum_pvalue')
+  # 'SKAT', 'SKAT_pvalue', # same as SPU2
+  simresults = matrix(NA, nrow=nsim, ncol=length(nams), dimnames=list(NULL, nams))
 
 
-    #### Empty power results ####
-    powresults = matrix(NA, nrow=1, ncol=(2+sum(grepl('pvalue', nams) )), dimnames=list(NULL, c( sub('_pvalue', '', grep('_pvalue$', nams, value=TRUE) ), 'k', 'mbeta') ) )
+  #### Empty power results ####
+  powresults = matrix(NA, nrow=1, ncol=(2+sum(grepl('pvalue', nams) )), dimnames=list(NULL, c( sub('_pvalue', '', grep('_pvalue$', nams, value=TRUE) ), 'k', 'mbeta') ) )
 
 
-    #### parameters for distribution of SKAT statistic ####
-    # should make this hat matrix more general to work with other covariates
-    H1 = matrix(1, n, 1) %*% matrix(1, 1, n)/n
-    # sqrt of variance of Y (idempotent)
-    A = svd(diag(rep(1, n)) - H1, nv=0)
-    # reducing dimensions of G by rank of H1
-    A = A$u[ ,round(A$d, 10)>0]
-    G = t(A) %*% Gprime
-    linkatlambda = svd(G, nu=0, nv=0)$d^2
-    # drop small eigenvalues
-    linkatlambda = linkatlambda[ round(linkatlambda, 10) >0]
+  #### parameters for distribution of SKAT statistic ####
+  # should make this hat matrix more general to work with other covariates
+  H1 = matrix(1, n, 1) %*% matrix(1, 1, n)/n
+  # sqrt of variance of Y (idempotent)
+  A = svd(diag(rep(1, n)) - H1, nv=0)
+  # reducing dimensions of G by rank of H1
+  A = A$u[ ,round(A$d, 10)>0]
+  G = t(A) %*% Gprime
+  linkatlambda = svd(G, nu=0, nv=0)$d^2
+  # drop small eigenvalues
+  linkatlambda = linkatlambda[ round(linkatlambda, 10) >0]
 
   return(list(Gprime = Gprime, GQs = GQs, GQs2 = GQs2, R1nams = R1nams,
               R2nams = R2nams, nams = nams, simresults = simresults,

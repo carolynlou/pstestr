@@ -2,7 +2,7 @@
 % Please edit documentation in R/maxsum_altsim_setup.R
 \name{sim_setup}
 \alias{sim_setup}
-\title{Sets up necessary parameters for simulation}
+\title{Sets up necessary parameters for power calculation simulation}
 \usage{
 sim_setup(n = 100, p = 1000, model = "normal", sigma = 1,
   nsim = 200, alpha = 0.05, seed = 2019, rho = 0.9, betasp = 1,
@@ -29,6 +29,11 @@ sim_setup(n = 100, p = 1000, model = "normal", sigma = 1,
 
 \item{rs}{investigator-specified set of "contrasts" of G, defaults to c(10, 20, 50)}
 }
+\value{
+A list including spatial correlation parameters, empty dataframes for simresults
+ and powresults, parameters for distribution of SKAT statistic
+}
 \description{
-Sets up necessary parameters for simulation
+Support function for maxsum_altsim, which supports maxsum_simulations. Sets
+up objects needed to do power calculation. Not modifiable by user.
 }

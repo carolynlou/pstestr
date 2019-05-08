@@ -2,8 +2,7 @@
 % Please edit documentation in R/maxsum_altsim.R
 \name{pstest}
 \alias{pstest}
-\title{Performs power analysis for the projected score test under a single alternative hypothesis
-simulation under a few alternative hypotheses}
+\title{Performs the power analysis for the projected score test}
 \usage{
 pstest(n = 100, p = 1000, model = "normal", sigma = 1,
   nsim = 500, alpha = 0.05, seed = 2019, mbeta = 0, kperc = 40,
@@ -40,10 +39,10 @@ pstest(n = 100, p = 1000, model = "normal", sigma = 1,
 A list of the entire matrix of simulation results, the power results, and "out"
 }
 \description{
-This is an indep function which calls setup from maxsum_altsim_setup.R,
+This is an independent function which calls setup from maxsum_altsim_setup.R,
 which sets up all of the variables needed for one value of kperc, percentage of independent variables with nonzero signal
 and one value of mbeta, mean coefficient for non zero effects uniform around that value
-That script loops through the variable k and beta
+That function loops through the variables k and beta.
 }
 \keyword{projected}
 \keyword{score}

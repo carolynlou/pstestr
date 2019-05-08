@@ -1,8 +1,11 @@
-#' Conducts power analysis for PST along with several other methods
+#' Power analysis for projected score test
+#'
+#' @description Conducts power analysis for PST along with several other methods
 #' for range of user-specified mbetas, ks, and ns. User uses this function to conduct
 #' simulation study. Offers option for parallelization
 #'
 #' @param nsim number of simulations to conduct to assess power, defaults to 500
+#' @param seed chosen seed for simulations, defaults to 2019
 #' @param mbetas vector of mean beta values
 #' @param ks vector of percentage of independent variables with nonzero signal
 #' @param n defaults to 100
@@ -10,7 +13,6 @@
 #' @param model can be specified as 'normal' (default) for linear regression, otherwise does logistic regression
 #' @param sigma defaults to 1
 #' @param alpha significance level, defaults to 0.05
-#' @param seed set a seed for the power calculation, defaults to 2019
 #' @param rho spatial correlation in G parameter, AR1 structure, efaults to 0.9
 #' @param betasp indicator of presence of spatial information, defaults to TRUE
 #' @param rs investigator-specified set of "contrasts" of G, defaults to c(10, 20, 50)
@@ -21,6 +23,7 @@
 #' @export
 
 pst_sim = function(nsim = 500,
+                   seed = 2019,
                    mbetas = c(0, 0.005, 0.01, 0.015, 0.02, 0.025, 0.03, 0.035, 0.04, 0.045, 0.05, 0.06,  0.07, 0.08, 0.09, 0.1),
                    ks = c(40, 60, 70, 80, 100),
                    n = 100,
@@ -28,7 +31,6 @@ pst_sim = function(nsim = 500,
                    model = 'normal',
                    sigma = 1,
                    alpha = 0.05,
-                   seed = 2019,
                    rho = 0.9,
                    betasp = TRUE,
                    rs = c(10, 20, 50),

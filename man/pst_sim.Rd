@@ -2,18 +2,18 @@
 % Please edit documentation in R/maxsum_simulations.R
 \name{pst_sim}
 \alias{pst_sim}
-\title{Conducts power analysis for PST along with several other methods
-for range of user-specified mbetas, ks, and ns. User uses this function to conduct
-simulation study. Offers option for parallelization}
+\title{Power analysis for projected score test}
 \usage{
-pst_sim(nsim = 500, mbetas = c(0, 0.005, 0.01, 0.015, 0.02, 0.025,
-  0.03, 0.035, 0.04, 0.045, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1),
-  ks = c(40, 60, 70, 80, 100), n = 100, p = 1000, model = "normal",
-  sigma = 1, alpha = 0.05, seed = 2019, rho = 0.9, betasp = TRUE,
-  rs = c(10, 20, 50), mc.cores = 1)
+pst_sim(nsim = 500, seed = 2019, mbetas = c(0, 0.005, 0.01, 0.015,
+  0.02, 0.025, 0.03, 0.035, 0.04, 0.045, 0.05, 0.06, 0.07, 0.08, 0.09,
+  0.1), ks = c(40, 60, 70, 80, 100), n = 100, p = 1000,
+  model = "normal", sigma = 1, alpha = 0.05, rho = 0.9,
+  betasp = TRUE, rs = c(10, 20, 50), mc.cores = 1)
 }
 \arguments{
 \item{nsim}{number of simulations to conduct to assess power, defaults to 500}
+
+\item{seed}{chosen seed for simulations, defaults to 2019}
 
 \item{mbetas}{vector of mean beta values}
 
@@ -28,8 +28,6 @@ pst_sim(nsim = 500, mbetas = c(0, 0.005, 0.01, 0.015, 0.02, 0.025,
 \item{sigma}{defaults to 1}
 
 \item{alpha}{significance level, defaults to 0.05}
-
-\item{seed}{set a seed for the power calculation, defaults to 2019}
 
 \item{rho}{spatial correlation in G parameter, AR1 structure, efaults to 0.9}
 
