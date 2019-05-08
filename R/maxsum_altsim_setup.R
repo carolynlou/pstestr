@@ -1,22 +1,11 @@
-# maxkat_nullsim
-# simulation under a few alternative hypotheses
-rm(list=ls())
-setwd('/Users/louc/Box/Penn/Penn_Y2/BSTA670/simproject/clou_simonvandekar-pst/power_analyses/')
-#setwd('~/Documents/work/maxsum/power_analyses')
-logdir = './logdir'
-dir.create(logdir, showWarnings=FALSE)
-# removes old log files
-unlink(file.path(logdir, '*'))
-
-mbetas = c(0, 0.05, 0.01, 0.015, 0.02, 0.025, 0.03, 0.035, 0.04, 0.045, 0.05, 0.06,  0.07, 0.08, 0.09, 0.1)
-ks = c(40, 60, 70, 80, 100)
-
+#' Sets up necessary parameters for simulation
+#'
 
 #### THINGS THAT ARE FIXED ####
 # fixed design
 # might have to center
 # consider using spatially correlated variables
-setup = function(n = 100, p = 1000, model = 'normal', sigma = 1, nsim = 200, alpha = 0.05, seed = 2019,
+sim_setup = function(n = 100, p = 1000, model = 'normal', sigma = 1, nsim = 200, alpha = 0.05, seed = 2019,
                  rho = 0.9,
                  betasp = 1,
                  rs = c(10, 20, 50)){
@@ -36,7 +25,7 @@ setup = function(n = 100, p = 1000, model = 'normal', sigma = 1, nsim = 200, alp
   # Investigator specified set of "contrasts" of G.
   # Use a spline basis to capture "spatially" flexible effects
   # INSTEAD OF SPLINE BASIS USE SOMETHING BASED ON A SPATIAL CORRELATION STRUCTURE
-  contrasts = lapply(rs, function(r) svd(bs(1:p, df=r, intercept=TRUE ), nu=r, nv=0)$u )
+  contrasts = lapply(rs, function(r) svd( splines::bs(1:p, df=r, intercept=TRUE ), nu=r, nv=0)$u )
   #contrasts = lapply(rs, buildbasis, p=p)
   O = svd(Gprime, nu=0, nv=n)$v
   contrasts2 = lapply(rs, function(r) O[,1:r]  )
@@ -79,13 +68,4 @@ setup = function(n = 100, p = 1000, model = 'normal', sigma = 1, nsim = 200, alp
               R2nams = R2nams, nams = nams, simresults = simresults,
               powresults = powresults, H1 = H1, A = A, G = G, linkatlambda = linkatlambda))
 
-
-  # #### loop through k ####
-  # for(curk in ks){
-  #   for(beta in mbetas){
-  #
-  #      system( paste( 'R --file=./maxsum_altsim.R --args', getwd(), setupfile, curk, mbeta) )
-  #
-  #   }
-  # }
 }

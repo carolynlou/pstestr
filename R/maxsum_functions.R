@@ -7,7 +7,7 @@
 #' @import AssotesteR
 #' @import abind
 #' @import quantreg
-
+#'
 
 
 
@@ -259,3 +259,4 @@ catauc = function(r, Y1, Y2, G1tilde, G2tilde, covY1, covY2, PCs=NULL){
    o <- getOverlap(ranks1, ranks2)
    mean(o)
 }
+

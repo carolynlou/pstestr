@@ -1,30 +1,30 @@
 #' Performs power analysis for the projected score test under a single alternative hypothesis
 #' simulation under a few alternative hypotheses
-#' This is an indep function which calls setup from maxsum_altsim_setup.R,
+#'
+#' @description This is an indep function which calls setup from maxsum_altsim_setup.R,
 #' which sets up all of the variables needed for one value of kperc, percentage of independent variables with nonzero signal
 #' and one value of mbeta, mean coefficient for non zero effects uniform around that value
 #' That script loops through the variable k and beta
 #'
-#' @param n Defaults to 100
-#' @param p Defaults to 1000
-#' @param model Can be specified as 'normal' (default) for linear regression, otherwise does logistic regression
-#' @param sigma Defaults to 1
-#' @param nsim Defaults to 500
-#' @param alpha significance level, Defaults to 0.05
-#' @param seed set a seed for the power calculation. defaults to 2019
+#' @param n defaults to 100
+#' @param p defaults to 1000
+#' @param model can be specified as 'normal' (default) for linear regression, otherwise does logistic regression
+#' @param sigma defaults to 1
+#' @param nsim defaults to 500
+#' @param alpha significance level, defaults to 0.05
+#' @param seed set a seed for the power calculation, defaults to 2019
 #' @param mbeta mean coefficient for nonzero effects, defaults to 0
 #' @param kperc percentage of independent variables with nonzero signal, defaults to 40
-#' @param rho spatial correlation in G parameter, AR1 structure. defaults to 0.9
-#' @param betasp indicator of presence of spatial information. defaults to TRUE
-#' @param rs Investigator specified set of "contrasts" of G. defaults to c(10, 20, 50)
+#' @param rho spatial correlation in G parameter, AR1 structure, defaults to 0.9
+#' @param betasp indicator of presence of spatial information, defaults to TRUE
+#' @param rs investigator0specified set of "contrasts" of G, defaults to c(10, 20, 50)
+#'
+#' @import foreach
+#' @import doParallel
+#'
+#' @return A list of the entire matrix of simulation results, the power results, and "out"
 #' @keywords projected score test
-#'
 #' @export
-#'
-
-
-
-
 
 pstest = function(n = 100, p = 1000, model = 'normal',
                   sigma = 1, nsim = 500, alpha = 0.05, seed = 2019,
@@ -32,9 +32,15 @@ pstest = function(n = 100, p = 1000, model = 'normal',
                   kperc = 40, #current k
                   rho = 0.9,
                   betasp = TRUE,
-                  rs = c(10, 20, 50)){
+                  rs = c(10, 20, 50),
+                  mc.cores = 1){
 
-  sobj = setup() #create setup file with params specified in main function
+  #set up simulation
+  sobj = sim_setup(n = n, p = p, model = model, sigma = sigma, nsim = nsim,
+                   alpha = alpha, seed = seed,
+                   rho = rho,
+                   betasp = betasp,
+                   rs = rs) #create setup object with params specified in main function
 
   Gprime = sobj$Gprime
   GQs = sobj$GQs
@@ -49,10 +55,6 @@ pstest = function(n = 100, p = 1000, model = 'normal',
   G = sobj$G
   linkatlambda = sobj$linkatlambda
 
-
-  dir.create('power_results', showWarnings = FALSE)
-  powout = sub('setup_', '', sub('.rdata', paste('_k', kperc, '_mbeta', mbeta, '_betasp', betasp, '.rdata', sep=''), sub('power_files', 'power_results', setupfile) ) )
-
   betas = seq(0, mbeta, length.out=kperc/2+1)[-1]
 
   # spatial information
@@ -65,8 +67,11 @@ pstest = function(n = 100, p = 1000, model = 'normal',
   }
 
 
-  for(i in 1:nsim){
-    if(tolower(model)=='normal'){
+  #parallelize the simulations
+  cl = parallel::makeCluster(mc.cores)
+  doParallel::registerDoParallel()
+  r = foreach(icount(nsim), .combine = rbind) %dopar% {
+      if(tolower(model)=='normal'){
       # Simulate Y under no covariates
       Y = Gprime %*% beta + rnorm(n, 0, sigma)
       # regress out mean
@@ -104,7 +109,6 @@ pstest = function(n = 100, p = 1000, model = 'normal',
     #SKAT =  t(Y0) %*% Gprime %*% t(Gprime) %*% Y0
 
     # adaptive SPU (Sum of Powered score (U?))
-    # resample='sim' gives incorrect results
     # I think you just have to scale Y maybe.
     if(tolower(model) == 'normal'){
       out = aSPU(Y, Gprime, cov=X, resample='perm', model='gaussian')
@@ -123,41 +127,31 @@ pstest = function(n = 100, p = 1000, model = 'normal',
       # asymptotic
       pvalueR1 = 1-pchisq(R1s, df=rs)
       pvalueR12 = 1-pchisq(R1s2, df=rs)
-
-      # also perform categorical tests
-      #nperms = 100
-      #assu.out = ASSU.Ord(Y, Gprime, perm=nperms)
-      #ssu.out = SSU(Y, Gprime, perm=nperms)
-      #asum.out = ASUM.Ord(Y, Gprime, perm=nperms)
-      #sum.out = SUM(Y, Gprime, perm=nperms)
-      #simresults[, c('aSSU', 'aSSU_pvalue')] = c(assu.out$assu.stat, assu.out$perm.pval)
-      #simresults[, c('SSU', 'SSU_pvalue')] = c(ssu.out$ssu.stat, ssu.out$perm.pval)
-      #simresults[, c('aSum', 'aSum_pvalue')] = c(asum.out$asum.stat, asum.out$perm.pval)
-      #simresults[i, c('Sum', 'Sum_pvalue')] = c(sum.out$asum.stat, sum.out$perm.pval)
     }
 
     # unknown variance - needs to be scaled to smaller numbers for imhof to work
     # hence dividing by sum(linkatlambda)
-    #pvalueSKAT = imhof(q=SKAT/sum(linkatlambda), lambda=linkatlambda/sum(linkatlambda))$Qq
 
-
-
-    # output results
-    simresults[i, R1nams] = c(R1s, pvalueR1)
-    simresults[i, R2nams] = c(R1s2, pvalueR12)
-    #simresults[i,c('SKAT', 'SKAT_pvalue')] = c(SKAT, pvalueSKAT)
     # value of adaptive test is not meaningful I think
-    simresults[i,c('aSPU', 'aSPU_pvalue')] = c(out$Ts['aSPU'], out$pvs['aSPU'])
-    simresults[i,c('SKAT', 'SKAT_pvalue')] = c(out$Ts['SPU2'], out$pvs['SPU2'])
-    simresults[i,c('Sum', 'Sum_pvalue')] = c(out$Ts['SPU1'], out$pvs['SPU1'])
+    simresults = data.frame(NA)
+    simresults[, R1nams] = c(R1s, pvalueR1)
+    simresults[, R2nams] = c(R1s2, pvalueR12)
+    simresults[,c('aSPU', 'aSPU_pvalue')] = c(out$Ts['aSPU'], out$pvs['aSPU'])
+    simresults[,c('SKAT', 'SKAT_pvalue')] = c(out$Ts['SPU2'], out$pvs['SPU2'])
+    simresults[,c('Sum', 'Sum_pvalue')] = c(out$Ts['SPU1'], out$pvs['SPU1'])
 
-    if(! i %% 200) cat('done', i, '\n')
+    simresults[,-1]
+
+    #if(! i %% 200) cat('done', i, '\n')
   }
+  registerDoSEQ()
 
-  simresults = as.data.frame(simresults)
+  simresults = as.data.frame(r)
   powresults[1,] = c(colMeans(simresults[,grep('_pvalue$', nams)]<=alpha, na.rm = T), kperc, mbeta)
   powresults = as.data.frame(powresults)
-  return(list=c('simresults', 'powresults', 'out'))
+
+
+  return(list("simresults" = simresults, "powresults" = powresults))
 
 }
 
