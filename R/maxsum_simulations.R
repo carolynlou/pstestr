@@ -2,19 +2,21 @@
 #' for range of user-specified mbetas, ks, and ns. User uses this function to conduct
 #' simulation study. Offers option for parallelization
 #'
-#' @param nsim Number of simulations to conduct to assess power. Defaults to 500
-#' @param mbetas Vector of mean beta values
-#' @param ks Vector of percentage of independent variables with nonzero signal
-#' @param n Defaults to 100
-#' @param p Defaults to 1000
-#' @param model Can be specified as 'normal' (default) for linear regression, otherwise does logistic regression
-#' @param sigma Defaults to 1
-#' @param alpha significance level, Defaults to 0.05
-#' @param seed set a seed for the power calculation. defaults to 2019
-#' @param rho spatial correlation in G parameter, AR1 structure. defaults to 0.9
-#' @param betasp indicator of presence of spatial information. defaults to TRUE
-#' @param rs Investigator specified set of "contrasts" of G. defaults to c(10, 20, 50)
-#' @param mc.cores Number of cores to run on. Defaults to 1
+#' @param nsim number of simulations to conduct to assess power, defaults to 500
+#' @param mbetas vector of mean beta values
+#' @param ks vector of percentage of independent variables with nonzero signal
+#' @param n defaults to 100
+#' @param p defaults to 1000
+#' @param model can be specified as 'normal' (default) for linear regression, otherwise does logistic regression
+#' @param sigma defaults to 1
+#' @param alpha significance level, defaults to 0.05
+#' @param seed set a seed for the power calculation, defaults to 2019
+#' @param rho spatial correlation in G parameter, AR1 structure, efaults to 0.9
+#' @param betasp indicator of presence of spatial information, defaults to TRUE
+#' @param rs investigator-specified set of "contrasts" of G, defaults to c(10, 20, 50)
+#' @param mc.cores number of cores to run on, defaults to 1
+#'
+#' @return A data frame of power values for PST as well as aSPU, SKAT, and Sum for a range of mbetas and ks. Also plots the power curves.
 #'
 #' @export
 
@@ -76,6 +78,6 @@ pst_sim = function(nsim = 500,
 
   }
 
-  return(results)
+  return(fullpow)
 
 }

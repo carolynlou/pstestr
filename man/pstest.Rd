@@ -3,47 +3,43 @@
 \name{pstest}
 \alias{pstest}
 \title{Performs power analysis for the projected score test under a single alternative hypothesis
-simulation under a few alternative hypotheses
-This is an indep function which calls setup from maxsum_altsim_setup.R,
-which sets up all of the variables needed for one value of kperc, percentage of independent variables with nonzero signal
-and one value of mbeta, mean coefficient for non zero effects uniform around that value
-That script loops through the variable k and beta}
+simulation under a few alternative hypotheses}
 \usage{
 pstest(n = 100, p = 1000, model = "normal", sigma = 1,
   nsim = 500, alpha = 0.05, seed = 2019, mbeta = 0, kperc = 40,
   rho = 0.9, betasp = TRUE, rs = c(10, 20, 50), mc.cores = 1)
 }
 \arguments{
-\item{n}{Defaults to 100}
+\item{n}{defaults to 100}
 
-\item{p}{Defaults to 1000}
+\item{p}{defaults to 1000}
 
-\item{model}{Can be specified as 'normal' (default) for linear regression, otherwise does logistic regression}
+\item{model}{can be specified as 'normal' (default) for linear regression, otherwise does logistic regression}
 
-\item{sigma}{Defaults to 1}
+\item{sigma}{defaults to 1}
 
-\item{nsim}{Defaults to 500}
+\item{nsim}{defaults to 500}
 
-\item{alpha}{significance level, Defaults to 0.05}
+\item{alpha}{significance level, defaults to 0.05}
 
-\item{seed}{set a seed for the power calculation. defaults to 2019}
+\item{seed}{set a seed for the power calculation, defaults to 2019}
 
 \item{mbeta}{mean coefficient for nonzero effects, defaults to 0}
 
 \item{kperc}{percentage of independent variables with nonzero signal, defaults to 40}
 
-\item{rho}{spatial correlation in G parameter, AR1 structure. defaults to 0.9}
+\item{rho}{spatial correlation in G parameter, AR1 structure, defaults to 0.9}
 
-\item{betasp}{indicator of presence of spatial information. defaults to TRUE}
+\item{betasp}{indicator of presence of spatial information, defaults to TRUE}
 
-\item{rs}{Investigator specified set of "contrasts" of G. defaults to c(10, 20, 50)}
+\item{rs}{investigator-specified set of "contrasts" of G, defaults to c(10, 20, 50)}
+
+\item{mc.cores}{number of cores to run simulation on}
 }
 \value{
 A list of the entire matrix of simulation results, the power results, and "out"
 }
 \description{
-Performs power analysis for the projected score test under a single alternative hypothesis
-simulation under a few alternative hypotheses
 This is an indep function which calls setup from maxsum_altsim_setup.R,
 which sets up all of the variables needed for one value of kperc, percentage of independent variables with nonzero signal
 and one value of mbeta, mean coefficient for non zero effects uniform around that value

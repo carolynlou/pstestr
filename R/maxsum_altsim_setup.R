@@ -1,5 +1,16 @@
 #' Sets up necessary parameters for simulation
 #'
+#'
+#' @param n defaults to 100
+#' @param p defaults to 1000
+#' @param model can be specified as 'normal' (default) for linear regression, otherwise does logistic regression
+#' @param sigma defaults to 1
+#' @param nsim defaults to 500
+#' @param alpha significance level, defaults to 0.05
+#' @param seed set a seed for the power calculation, defaults to 2019
+#' @param rho spatial correlation in G parameter, AR1 structure, defaults to 0.9
+#' @param betasp indicator of presence of spatial information, defaults to TRUE
+#' @param rs investigator-specified set of "contrasts" of G, defaults to c(10, 20, 50)
 
 #### THINGS THAT ARE FIXED ####
 # fixed design

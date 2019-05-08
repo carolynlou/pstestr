@@ -13,31 +13,34 @@ pst_sim(nsim = 500, mbetas = c(0, 0.005, 0.01, 0.015, 0.02, 0.025,
   rs = c(10, 20, 50), mc.cores = 1)
 }
 \arguments{
-\item{nsim}{Number of simulations to conduct to assess power. Defaults to 500}
+\item{nsim}{number of simulations to conduct to assess power, defaults to 500}
 
-\item{mbetas}{Vector of mean beta values}
+\item{mbetas}{vector of mean beta values}
 
-\item{ks}{Vector of percentage of independent variables with nonzero signal}
+\item{ks}{vector of percentage of independent variables with nonzero signal}
 
-\item{n}{Defaults to 100}
+\item{n}{defaults to 100}
 
-\item{p}{Defaults to 1000}
+\item{p}{defaults to 1000}
 
-\item{model}{Can be specified as 'normal' (default) for linear regression, otherwise does logistic regression}
+\item{model}{can be specified as 'normal' (default) for linear regression, otherwise does logistic regression}
 
-\item{sigma}{Defaults to 1}
+\item{sigma}{defaults to 1}
 
-\item{alpha}{significance level, Defaults to 0.05}
+\item{alpha}{significance level, defaults to 0.05}
 
-\item{seed}{set a seed for the power calculation. defaults to 2019}
+\item{seed}{set a seed for the power calculation, defaults to 2019}
 
-\item{rho}{spatial correlation in G parameter, AR1 structure. defaults to 0.9}
+\item{rho}{spatial correlation in G parameter, AR1 structure, efaults to 0.9}
 
-\item{betasp}{indicator of presence of spatial information. defaults to TRUE}
+\item{betasp}{indicator of presence of spatial information, defaults to TRUE}
 
-\item{rs}{Investigator specified set of "contrasts" of G. defaults to c(10, 20, 50)}
+\item{rs}{investigator-specified set of "contrasts" of G, defaults to c(10, 20, 50)}
 
-\item{mc.cores}{Number of cores to run on. Defaults to 1}
+\item{mc.cores}{number of cores to run on, defaults to 1}
+}
+\value{
+A data frame of power values for PST as well as aSPU, SKAT, and Sum for a range of mbetas and ks. Also plots the power curves.
 }
 \description{
 Conducts power analysis for PST along with several other methods

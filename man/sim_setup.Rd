@@ -8,6 +8,27 @@ sim_setup(n = 100, p = 1000, model = "normal", sigma = 1,
   nsim = 200, alpha = 0.05, seed = 2019, rho = 0.9, betasp = 1,
   rs = c(10, 20, 50))
 }
+\arguments{
+\item{n}{defaults to 100}
+
+\item{p}{defaults to 1000}
+
+\item{model}{can be specified as 'normal' (default) for linear regression, otherwise does logistic regression}
+
+\item{sigma}{defaults to 1}
+
+\item{nsim}{defaults to 500}
+
+\item{alpha}{significance level, defaults to 0.05}
+
+\item{seed}{set a seed for the power calculation, defaults to 2019}
+
+\item{rho}{spatial correlation in G parameter, AR1 structure, defaults to 0.9}
+
+\item{betasp}{indicator of presence of spatial information, defaults to TRUE}
+
+\item{rs}{investigator-specified set of "contrasts" of G, defaults to c(10, 20, 50)}
+}
 \description{
 Sets up necessary parameters for simulation
 }

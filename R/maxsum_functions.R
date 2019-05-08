@@ -7,10 +7,8 @@
 #' @import AssotesteR
 #' @import abind
 #' @import quantreg
+#' @import doParallel
 #'
-
-
-
 
 
 # FUNCTIONS FOR MAXKAT TEST
@@ -29,14 +27,17 @@
 #library(SKAT)
 
 
+# Rayleigh Quotient
 # function to estimate alpha vector
 # This optimizes a Rayleigh quotient which is the solution
 # to a generalized eigenvalue problem. alpha is the first
 # eigenvector.
+
 rayleigh.opt <- function(u=NULL, v=NULL, par=NULL) {
   (t(par) %*% u %*% par)/(t(par) %*% v %*% par)
 }
 
+# Sum of Projection Matrix
 # sums the p^2 nXn sub-blocks of an
 # npXnp projection matrix
 sumProj <- function(P, n, p){
@@ -50,6 +51,8 @@ sumProj <- function(P, n, p){
   out
 }
 
+
+# Sum of Orthogonal Basis Vectors
 # sums the p^2 nXn sub-blocks of an
 # npXnp projection matrix by summing the
 # outer product of the underlying orthogonal
@@ -69,7 +72,17 @@ sumOrth <- function(Psi, n, p){
   out
 }
 
-# This is roughly twice as fast
+
+# Sum of Orthogonal Basis Vectors, faster
+# sums the p^2 nXn sub-blocks of an
+# npXnp projection matrix by summing the
+# outer product of the underlying orthogonal
+# basis vectors. This is the slowest step.
+# sums the p^2 nXn sub-blocks of an
+# npXnp projection matrix by summing the
+# outer product of the underlying orthogonal
+# basis vectors. This is roughly twice as fast as sumOrth().
+
 sumOrth2 <- function(Psi, n, p){
   out1 <- out <- matrix(0, n, n)
   for(j in 1:p){
@@ -85,7 +98,17 @@ sumOrth2 <- function(Psi, n, p){
 }
 # test = microbenchmark(sumOrth2(Psi, n, p), sumOrth(Psi, n, p), times=50L )
 
-# This functions slightly differently
+
+# Sum of Orthogonal Basis Vectors, different
+# sums the p^2 nXn sub-blocks of an
+# npXnp projection matrix by summing the
+# outer product of the underlying orthogonal
+# basis vectors. This is the slowest step.
+# sums the p^2 nXn sub-blocks of an
+# npXnp projection matrix by summing the
+# outer product of the underlying orthogonal
+# basis vectors. This functions slightly differently.
+
 sumOrth3 <- function(Psi, i, j, n, p){
   out <- matrix(0, n, n)
   for(ell in 1:p){
@@ -94,35 +117,31 @@ sumOrth3 <- function(Psi, i, j, n, p){
   out + t(out)
 }
 
-# to estimate the numerator of Q0
+
+# Estimates the numerator of Q0
 Q0num = function(Y, contrasts, G){
   cons = apply(contrasts, 2, function(con) t(Y) %*% G %*% diag(con) )
   t(cons) %*% cons
 }
 
-# denominator of Q0
+
+# Estimates the denominator of Q0
 Q0denom = function(contrast, dGtG){
   cons = apply(contrast, 2, function(con) dGtG %*% diag(con) )
   Vmat = t(cons) %*% cons
 }
 
-# estimates the numerator of R0
+# Estimates the numerator of R0
 R0num = function(Y, contrasts, G){
   cons = t(Y) %*% G %*% contrasts
   t(cons) %*% cons
 }
 
-# denominator of R0
+# Estimates the denominator of Q0
 R1denom = function(contrast, G){
   cons = G %*% contrast
   Vmat = t(cons) %*% cons
 }
-# was in maxsum_altsim_setup:
-#### This is in the denominator of R_1 ####
-#R1denoms = lapply(contrasts, R1denom, G = G)
-# was in maxsum_altsim:
-#R1nums = lapply(contrasts, function(con) R0num(Y, con, Gprime ) )
-#R1s = sapply(1:length(R1nums), function(x) geigen(A=R1nums[[x]], B=R1denoms[[x]], only.values = TRUE, symmetric = TRUE)$values[nrow(R1nums[[x]])])
 
 
 # perform 1 permutation of the data

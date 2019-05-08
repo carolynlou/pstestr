@@ -17,10 +17,8 @@
 #' @param kperc percentage of independent variables with nonzero signal, defaults to 40
 #' @param rho spatial correlation in G parameter, AR1 structure, defaults to 0.9
 #' @param betasp indicator of presence of spatial information, defaults to TRUE
-#' @param rs investigator0specified set of "contrasts" of G, defaults to c(10, 20, 50)
-#'
-#' @import foreach
-#' @import doParallel
+#' @param rs investigator-specified set of "contrasts" of G, defaults to c(10, 20, 50)
+#' @param mc.cores number of cores to run simulation on
 #'
 #' @return A list of the entire matrix of simulation results, the power results, and "out"
 #' @keywords projected score test
@@ -70,7 +68,7 @@ pstest = function(n = 100, p = 1000, model = 'normal',
   #parallelize the simulations
   cl = parallel::makeCluster(mc.cores)
   doParallel::registerDoParallel()
-  r = foreach(icount(nsim), .combine = rbind) %dopar% {
+  r = foreach::foreach(icount(nsim), .combine = rbind) %dopar% {
       if(tolower(model)=='normal'){
       # Simulate Y under no covariates
       Y = Gprime %*% beta + rnorm(n, 0, sigma)
