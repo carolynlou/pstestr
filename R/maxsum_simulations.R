@@ -14,7 +14,8 @@ pst_sim = function(nsim = 500,
   # results =
     start = proc.time()
     parallel::mclapply(mbetas, function(mbeta) {
-      lapply(ks, function(curk) {pstest(nsim = nsim, mbeta = mbeta, kperc = curk)})},
+      unlist(lapply(ks, function(curk) {pstest(nsim = nsim, mbeta = mbeta, kperc = curk)}))
+      },
       mc.cores = mc.cores)
   proc.time() - start
 
