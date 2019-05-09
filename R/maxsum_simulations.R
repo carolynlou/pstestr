@@ -17,7 +17,7 @@
 #' @param betasp indicator of presence of spatial information, defaults to TRUE
 #' @param rs investigator-specified set of "contrasts" of G, defaults to c(10, 20, 50)
 #' @param mc.cores number of cores to run on, defaults to 1
-#' @param plot if TRUE, returns plots; if FALSE, does not. This produces one power plot per k across a range of mbetas
+#' @param plot if TRUE, makes plots; if FALSE, does not. This produces one power plot per k across a range of mbetas
 #' @importFrom graphics legend plot points
 #' @return A data frame of power values for PST as well as aSPU, SKAT, and Sum for a range of mbetas and ks. Also plots the power curves.
 #'
@@ -77,21 +77,23 @@ pst_sim = function(nsim = 500,
   fullpow = do.call("rbind", results) #collapsing power results
 
   #makes plots for each k
-  shapes = cbind(c(rep(1:2, each=length(rs)), rep(3, ncol(fullpow) - length(rs)*2) ), c(rep(1:length(rs), 2), 1:(ncol(fullpow) - length(rs)*2)) )
-  for (i in 1:length(ks)){
+  if(plot == T){
+    shapes = cbind(c(rep(1:2, each=length(rs)), rep(3, ncol(fullpow) - length(rs)*2) ), c(rep(1:length(rs), 2), 1:(ncol(fullpow) - length(rs)*2)) )
+    for (i in 1:length(ks)){
 
-    k = ks[i]
-    subpow = fullpow[ fullpow$k == k, ]
-    subpow = subpow[ ! duplicated(subpow$mbeta) ,]
-    subpow = subpow[ order(subpow$mbeta),]
+      k = ks[i]
+      subpow = fullpow[ fullpow$k == k, ]
+      subpow = subpow[ ! duplicated(subpow$mbeta) ,]
+      subpow = subpow[ order(subpow$mbeta),]
 
-    plot(y=subpow$aSPU, x=subpow$mbeta, xlab='Maximum Beta', ylab='Power',
-       		type='n', ylim=c(0,1), main=paste('n =',n, 'p =', p, '2k =', k))
-   	sapply(names(fullpow)[1:(ncol(fullpow)-2)], function(x) points(subpow$mbeta, subpow[,x],
-   		col=shapes[which(names(fullpow)==x),2], pch=shapes[which(names(fullpow)==x),1], type='b') )
-     legend('bottomright', legend=names(fullpow)[1:(ncol(fullpow)-2)], col=shapes[1:(ncol(fullpow)-2),2], pch=shapes[1:(ncol(fullpow)-2), 1],
-            y.intersp=0.9, bg='white')
+      plot(y=subpow$aSPU, x=subpow$mbeta, xlab='Maximum Beta', ylab='Power',
+         		type='n', ylim=c(0,1), main=paste('n =',n, 'p =', p, '2k =', k))
+     	sapply(names(fullpow)[1:(ncol(fullpow)-2)], function(x) points(subpow$mbeta, subpow[,x],
+     		col=shapes[which(names(fullpow)==x),2], pch=shapes[which(names(fullpow)==x),1], type='b') )
+       legend('bottomright', legend=names(fullpow)[1:(ncol(fullpow)-2)], col=shapes[1:(ncol(fullpow)-2),2], pch=shapes[1:(ncol(fullpow)-2), 1],
+              y.intersp=0.9, bg='white')
 
+    }
   }
 
   return(fullpow)

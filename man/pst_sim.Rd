@@ -37,7 +37,7 @@ pst_sim(nsim = 500, seed = 2019, mbetas = c(0, 0.005, 0.01, 0.015,
 
 \item{mc.cores}{number of cores to run on, defaults to 1}
 
-\item{plot}{if TRUE, returns plots; if FALSE, does not. This produces one power plot per k across a range of mbetas}
+\item{plot}{if TRUE, makes plots; if FALSE, does not. This produces one power plot per k across a range of mbetas}
 }
 \value{
 A data frame of power values for PST as well as aSPU, SKAT, and Sum for a range of mbetas and ks. Also plots the power curves.
