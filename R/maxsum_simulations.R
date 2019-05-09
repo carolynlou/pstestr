@@ -39,7 +39,7 @@ pst_sim = function(nsim = 500,
                    plot = TRUE){
 
   sobj = sim_setup(n = n, p = p, model = model, sigma = sigma, nsim = nsim,
-                   alpha = alpha, seed = seed, rho = rho, betasp = betasp, rs = rs)
+                   seed = seed, rho = rho, betasp = betasp, rs = rs)
   Gprime = sobj$Gprime
   GQs = sobj$GQs
   GQs2 = sobj$GQs2

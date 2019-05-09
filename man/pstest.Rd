@@ -6,10 +6,8 @@
 \usage{
 pstest(nsim = 500, mbeta = 0, kperc = 40, model = "normal",
   sigma = 1, alpha = 0.05, betasp = TRUE, rs = c(10, 20, 50),
-  mc.cores = 1, n = 100, p = 1000, Gprime = NULL, GQs = NULL,
-  GQs2 = NULL, R1nams = NULL, R2nams = NULL, nams = NULL,
-  simresults = NULL, powresults = NULL, H1 = NULL, A = NULL,
-  G = NULL, linkatlambda = NULL)
+  mc.cores = 1, n = 100, p = 1000, Gprime, GQs, GQs2, R1nams, R2nams,
+  nams, simresults, powresults, H1, A, G, linkatlambda)
 }
 \arguments{
 \item{nsim}{number of simulations to run to calculate power}

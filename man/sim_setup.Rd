@@ -5,8 +5,8 @@
 \title{Sets up necessary parameters for power calculation simulation}
 \usage{
 sim_setup(n = 100, p = 1000, model = "normal", sigma = 1,
-  nsim = 200, alpha = 0.05, seed = 2019, rho = 0.9, betasp = 1,
-  rs = c(10, 20, 50))
+  nsim = 500, seed = 2019, rho = 0.9, betasp = 1, rs = c(10, 20,
+  50))
 }
 \arguments{
 \item{n}{defaults to 100}
@@ -18,8 +18,6 @@ sim_setup(n = 100, p = 1000, model = "normal", sigma = 1,
 \item{sigma}{defaults to 1}
 
 \item{nsim}{defaults to 500}
-
-\item{alpha}{significance level, defaults to 0.05}
 
 \item{seed}{set a seed for the power calculation, defaults to 2019}
 
