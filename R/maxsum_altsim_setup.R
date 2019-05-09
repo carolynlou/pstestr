@@ -7,7 +7,6 @@
 #' @param model can be specified as 'normal' (default) for linear regression, otherwise does logistic regression
 #' @param sigma defaults to 1
 #' @param nsim defaults to 500
-#' @param alpha significance level, defaults to 0.05
 #' @param seed set a seed for the power calculation, defaults to 2019
 #' @param rho spatial correlation in G parameter, AR1 structure, defaults to 0.9
 #' @param betasp indicator of presence of spatial information, defaults to TRUE
@@ -20,8 +19,8 @@
 
 sim_setup = function(n = 100, p = 1000,
                      model = 'normal',
-                     sigma = 1, nsim = 200,
-                     alpha = 0.05, seed = 2019,
+                     sigma = 1, nsim = 500,
+                    seed = 2019,
                      rho = 0.9, betasp = 1,
                      rs = c(10, 20, 50)){
 
