@@ -57,7 +57,7 @@ pst_sim = function(nsim = 500,
   results = #collecting power results
     lapply(mbetas, function(mbeta) {
         ks.out = lapply(ks, function(kperc) {
-          print(mbeta)
+          #print(mbeta)
           pstest(nsim = nsim, mbeta = mbeta, kperc = kperc,
                  model = model, sigma = sigma, alpha = alpha, betasp = betasp,
                  rs = rs, mc.cores = mc.cores,
