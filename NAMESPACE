@@ -2,6 +2,7 @@
 
 export(pst_sim)
 export(pstest)
+export(sim_setup)
 import(AssotesteR)
 import(CompQuadForm)
 import(aSPU)

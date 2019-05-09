@@ -15,7 +15,7 @@
 #' @return A list including spatial correlation parameters, empty dataframes for simresults
 #'  and powresults, parameters for distribution of SKAT statistic
 #'
-#'  @export
+#' @export
 
 
 sim_setup = function(n = 100, p = 1000,
