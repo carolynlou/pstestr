@@ -14,6 +14,8 @@
 #' @param rs investigator-specified set of "contrasts" of G, defaults to c(10, 20, 50)
 #' @return A list including spatial correlation parameters, empty dataframes for simresults
 #'  and powresults, parameters for distribution of SKAT statistic
+#'
+#'  @export
 
 
 sim_setup = function(n = 100, p = 1000,

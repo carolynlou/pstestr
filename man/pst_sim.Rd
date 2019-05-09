@@ -8,7 +8,7 @@ pst_sim(nsim = 500, seed = 2019, mbetas = c(0, 0.005, 0.01, 0.015,
   0.02, 0.025, 0.03, 0.035, 0.04, 0.045, 0.05, 0.06, 0.07, 0.08, 0.09,
   0.1), ks = c(40, 60, 70, 80, 100), n = 100, p = 1000,
   model = "normal", sigma = 1, alpha = 0.05, rho = 0.9,
-  betasp = TRUE, rs = c(10, 20, 50), mc.cores = 1)
+  betasp = TRUE, rs = c(10, 20, 50), mc.cores = 1, plot = TRUE)
 }
 \arguments{
 \item{nsim}{number of simulations to conduct to assess power, defaults to 500}
@@ -19,9 +19,9 @@ pst_sim(nsim = 500, seed = 2019, mbetas = c(0, 0.005, 0.01, 0.015,
 
 \item{ks}{vector of percentage of independent variables with nonzero signal}
 
-\item{n}{defaults to 100}
+\item{n}{number of observations, defaults to 100}
 
-\item{p}{defaults to 1000}
+\item{p}{number of betas, defaults to 1000}
 
 \item{model}{can be specified as 'normal' (default) for linear regression, otherwise does logistic regression}
 
@@ -36,6 +36,8 @@ pst_sim(nsim = 500, seed = 2019, mbetas = c(0, 0.005, 0.01, 0.015,
 \item{rs}{investigator-specified set of "contrasts" of G, defaults to c(10, 20, 50)}
 
 \item{mc.cores}{number of cores to run on, defaults to 1}
+
+\item{plot}{if TRUE, returns plots; if FALSE, does not. This produces one power plot per k across a range of mbetas}
 }
 \value{
 A data frame of power values for PST as well as aSPU, SKAT, and Sum for a range of mbetas and ks. Also plots the power curves.

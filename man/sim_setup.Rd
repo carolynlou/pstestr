@@ -32,6 +32,8 @@ sim_setup(n = 100, p = 1000, model = "normal", sigma = 1,
 \value{
 A list including spatial correlation parameters, empty dataframes for simresults
  and powresults, parameters for distribution of SKAT statistic
+
+ @export
 }
 \description{
 Support function for maxsum_altsim, which supports maxsum_simulations. Sets

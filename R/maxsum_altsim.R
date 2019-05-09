@@ -5,19 +5,30 @@
 #' and one value of mbeta, mean coefficient for non zero effects uniform around that value
 #' That function loops through the variables k and beta.
 #'
-#' @param n defaults to 100
-#' @param p defaults to 1000
-#' @param model can be specified as 'normal' (default) for linear regression, otherwise does logistic regression
-#' @param sigma defaults to 1
-#' @param nsim defaults to 500
-#' @param alpha significance level, defaults to 0.05
-#' @param seed set a seed for the power calculation, defaults to 2019
+#' @param nsim number of simulations to run to calculate power
 #' @param mbeta mean coefficient for nonzero effects, defaults to 0
 #' @param kperc percentage of independent variables with nonzero signal, defaults to 40
-#' @param rho spatial correlation in G parameter, AR1 structure, defaults to 0.9
+#' @param model can be specified as 'normal' (default) for linear regression, otherwise does logistic regression
+#' @param sigma defaults to 1
+#' @param alpha significance level, defaults to 0.05
 #' @param betasp indicator of presence of spatial information, defaults to TRUE
 #' @param rs investigator-specified set of "contrasts" of G, defaults to c(10, 20, 50)
 #' @param mc.cores number of cores to run simulation on
+#' @param n defaults to 100
+#' @param p defaults to 1000
+#' @param Gprime parameter from sim_setup(), defaults to NULL
+#' @param GQs parameter from sim_setup(), defaults to NULL
+#' @param GQs2 parameter from sim_setup(), defaults to NULL
+#' @param R1nams parameter from sim_setup(), defaults to NULL
+#' @param R2nams parameter from sim_setup(), defaults to NULL
+#' @param nams parameter from sim_setup(), defaults to NULL
+#' @param simresults empty dataframe from sim_setup(), defaults to NULL
+#' @param powresults empty dataframe from sim_setup(), defaults to NULL
+#' @param H1 parameter from sim_setup(), defaults to NULL
+#' @param A parameter from sim_setup(), defaults to NULL
+#' @param G parameter from sim_setup(), defaults to NULL
+#' @param linkatlambda parameter from sim_setup(), defaults to NULL
+#'
 #' @import parallel
 #' @import foreach
 #' @importFrom doParallel registerDoParallel
@@ -29,34 +40,16 @@
 #' @keywords projected score test
 #' @export
 
-pstest = function(n = 100, p = 1000, model = 'normal',
-                  sigma = 1, nsim = 500, alpha = 0.05, seed = 2019,
-                  mbeta = 0, #mean bet
-                  kperc = 40, #current k
-                  rho = 0.9,
-                  betasp = TRUE,
-                  rs = c(10, 20, 50),
-                  mc.cores = 1){
 
-  #set up simulation
-  sobj = sim_setup(n = n, p = p, model = model, sigma = sigma, nsim = nsim,
-                   alpha = alpha, seed = seed,
-                   rho = rho,
-                   betasp = betasp,
-                   rs = rs) #create setup object with params specified in main function
-
-  Gprime = sobj$Gprime
-  GQs = sobj$GQs
-  GQs2 = sobj$GQs2
-  R1nams = sobj$R1nams
-  R2nams = sobj$R2nams
-  nams = sobj$nams
-  simresults = sobj$simresults
-  powresults = sobj$powresults
-  H1 = sobj$H1
-  A = sobj$A
-  G = sobj$G
-  linkatlambda = sobj$linkatlambda
+pstest = function(nsim = 500, mbeta = 0, kperc = 40,
+                  model = 'normal', sigma = 1, alpha = 0.05, betasp = TRUE,
+                  rs = c(10, 20, 50), mc.cores = 1,
+                  n = 100, p = 1000,
+                  Gprime = NULL, GQs = NULL,
+                  GQs2 = NULL, R1nams = NULL, R2nams = NULL,
+                  nams = NULL, simresults = NULL,
+                  powresults = NULL, H1 = NULL,
+                  A = NULL, G = NULL, linkatlambda = NULL){
 
   betas = seq(0, mbeta, length.out=kperc/2+1)[-1]
 
@@ -118,7 +111,6 @@ pstest = function(n = 100, p = 1000, model = 'normal',
     } else {
       out = aSPU(Y, Gprime, cov=X, resample='perm', model='binomial')
     }
-
 
 
     if(tolower(model) == 'normal'){

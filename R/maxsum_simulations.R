@@ -8,8 +8,8 @@
 #' @param seed chosen seed for simulations, defaults to 2019
 #' @param mbetas vector of mean beta values
 #' @param ks vector of percentage of independent variables with nonzero signal
-#' @param n defaults to 100
-#' @param p defaults to 1000
+#' @param n number of observations, defaults to 100
+#' @param p number of betas, defaults to 1000
 #' @param model can be specified as 'normal' (default) for linear regression, otherwise does logistic regression
 #' @param sigma defaults to 1
 #' @param alpha significance level, defaults to 0.05
@@ -17,6 +17,7 @@
 #' @param betasp indicator of presence of spatial information, defaults to TRUE
 #' @param rs investigator-specified set of "contrasts" of G, defaults to c(10, 20, 50)
 #' @param mc.cores number of cores to run on, defaults to 1
+#' @param plot if TRUE, returns plots; if FALSE, does not. This produces one power plot per k across a range of mbetas
 #' @importFrom graphics legend plot points
 #' @return A data frame of power values for PST as well as aSPU, SKAT, and Sum for a range of mbetas and ks. Also plots the power curves.
 #'
@@ -34,24 +35,37 @@ pst_sim = function(nsim = 500,
                    rho = 0.9,
                    betasp = TRUE,
                    rs = c(10, 20, 50),
-                   mc.cores = 1){
+                   mc.cores = 1,
+                   plot = TRUE){
+
+  sobj = sim_setup(n = n, p = p, model = model, sigma = sigma, nsim = nsim,
+                   alpha = alpha, seed = seed, rho = rho, betasp = betasp, rs = rs)
+  Gprime = sobj$Gprime
+  GQs = sobj$GQs
+  GQs2 = sobj$GQs2
+  R1nams = sobj$R1nams
+  R2nams = sobj$R2nams
+  nams = sobj$nams
+  simresults = sobj$simresults
+  powresults = sobj$powresults
+  H1 = sobj$H1
+  A = sobj$A
+  G = sobj$G
+  linkatlambda = sobj$linkatlambda
+
 
   results = #collecting power results
     lapply(mbetas, function(mbeta) {
-        ks.out = lapply(ks, function(curk) {
-          pstest(nsim = nsim,
-                 mbeta = mbeta,
-                 kperc = curk,
-                 n = n,
-                 p = p,
-                 model = model,
-                 sigma = sigma,
-                 alpha = alpha,
-                 seed = seed,
-                 rho = rho,
-                 betasp = betasp,
-                 rs = rs,
-                 mc.cores = mc.cores)
+        ks.out = lapply(ks, function(kperc) {
+          pstest(nsim = nsim, mbeta = mbetas, kperc = kperc,
+                 model = model, sigma = sigma, alpha = alpha, betasp = betasp,
+                 rs = rs, mc.cores = mc.cores,
+                 n = n, p = p,
+                 Gprime = Gprime, GQs = GQs,
+                 GQs2 = GQs2, R1nams = R1nams, R2nams = R2nams,
+                 nams = nams, simresults = simresults,
+                 powresults = powresults, H1 = H1,
+                 A = A, G = G, linkatlambda = linkatlambda)
         })
 
         ks.pow = data.frame(matrix(nrow = length(ks), ncol = 11))

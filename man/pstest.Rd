@@ -4,36 +4,59 @@
 \alias{pstest}
 \title{Performs the power analysis for the projected score test}
 \usage{
-pstest(n = 100, p = 1000, model = "normal", sigma = 1,
-  nsim = 500, alpha = 0.05, seed = 2019, mbeta = 0, kperc = 40,
-  rho = 0.9, betasp = TRUE, rs = c(10, 20, 50), mc.cores = 1)
+pstest(nsim = 500, mbeta = 0, kperc = 40, model = "normal",
+  sigma = 1, alpha = 0.05, betasp = TRUE, rs = c(10, 20, 50),
+  mc.cores = 1, n = 100, p = 1000, Gprime = NULL, GQs = NULL,
+  GQs2 = NULL, R1nams = NULL, R2nams = NULL, nams = NULL,
+  simresults = NULL, powresults = NULL, H1 = NULL, A = NULL,
+  G = NULL, linkatlambda = NULL)
 }
 \arguments{
-\item{n}{defaults to 100}
-
-\item{p}{defaults to 1000}
-
-\item{model}{can be specified as 'normal' (default) for linear regression, otherwise does logistic regression}
-
-\item{sigma}{defaults to 1}
-
-\item{nsim}{defaults to 500}
-
-\item{alpha}{significance level, defaults to 0.05}
-
-\item{seed}{set a seed for the power calculation, defaults to 2019}
+\item{nsim}{number of simulations to run to calculate power}
 
 \item{mbeta}{mean coefficient for nonzero effects, defaults to 0}
 
 \item{kperc}{percentage of independent variables with nonzero signal, defaults to 40}
 
-\item{rho}{spatial correlation in G parameter, AR1 structure, defaults to 0.9}
+\item{model}{can be specified as 'normal' (default) for linear regression, otherwise does logistic regression}
+
+\item{sigma}{defaults to 1}
+
+\item{alpha}{significance level, defaults to 0.05}
 
 \item{betasp}{indicator of presence of spatial information, defaults to TRUE}
 
 \item{rs}{investigator-specified set of "contrasts" of G, defaults to c(10, 20, 50)}
 
 \item{mc.cores}{number of cores to run simulation on}
+
+\item{n}{defaults to 100}
+
+\item{p}{defaults to 1000}
+
+\item{Gprime}{parameter from sim_setup(), defaults to NULL}
+
+\item{GQs}{parameter from sim_setup(), defaults to NULL}
+
+\item{GQs2}{parameter from sim_setup(), defaults to NULL}
+
+\item{R1nams}{parameter from sim_setup(), defaults to NULL}
+
+\item{R2nams}{parameter from sim_setup(), defaults to NULL}
+
+\item{nams}{parameter from sim_setup(), defaults to NULL}
+
+\item{simresults}{empty dataframe from sim_setup(), defaults to NULL}
+
+\item{powresults}{empty dataframe from sim_setup(), defaults to NULL}
+
+\item{H1}{parameter from sim_setup(), defaults to NULL}
+
+\item{A}{parameter from sim_setup(), defaults to NULL}
+
+\item{G}{parameter from sim_setup(), defaults to NULL}
+
+\item{linkatlambda}{parameter from sim_setup(), defaults to NULL}
 }
 \value{
 A list of the entire matrix of simulation results, the power results, and "out"
