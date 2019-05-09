@@ -51,7 +51,7 @@ pstest = function(nsim = 500, mbeta = 0, kperc = 40,
                   powresults, H1,
                   A, G, linkatlambda){
 
-  betas = seq(0, mbeta, length.out=kperc/2+1)[-1]
+    betas = seq(0, mbeta, length.out=kperc/2+1)[-1]
 
   # spatial information
   if(betasp){
