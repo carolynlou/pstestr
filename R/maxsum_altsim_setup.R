@@ -1,6 +1,6 @@
 #' Sets up necessary parameters for power calculation simulation
-#' @description Support function for maxsum_altsim, which supports maxsum_simulations. Sets
-#' up objects needed to do power calculation. Not modifiable by user.
+#' @description Support function for pstest(), which runs the power calculations that are wrapped in pst_sim(). Sets
+#' up objects needed to do power calculation.
 #'
 #' @param nsim defaults to 500
 #' @param seed set a seed for the generation of matrices needed for the various tests, defaults to 2019

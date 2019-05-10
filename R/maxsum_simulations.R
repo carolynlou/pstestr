@@ -2,7 +2,7 @@
 #'
 #' @description Conducts power analysis for PST along with several other methods
 #' for range of user-specified mbetas, ks, and ns. User uses this function to conduct
-#' simulation study. Offers option for parallelization
+#' simulation study. Offers option for parallelization. Wraps and combines results from sim_setup() and pstest()
 #'
 #' @param nsim number of simulations to conduct to assess power, defaults to 500
 #' @param seed chosen seed for simulations, defaults to 2019
