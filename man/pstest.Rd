@@ -4,21 +4,19 @@
 \alias{pstest}
 \title{Performs the power analysis for the projected score test}
 \usage{
-pstest(mbeta = 0, kperc = 40, mc.cores = 1, rs = c(10, 20, 50),
-  nsim = 500, n = 100, p = 1000, model = "normal", sigma = 1,
-  alpha = 0.05, betasp = TRUE, Gprime, GQs, GQs2, R1nams, R2nams, nams,
-  simresults, powresults, H1, A, G, linkatlambda)
+pstest(nsim = 500, seed = 2019, mbeta = 0, kperc = 40, n = 100,
+  p = 1000, model = "normal", sigma = 1, alpha = 0.05,
+  betasp = TRUE, rs = c(10, 20, 50), mc.cores = 1, Gprime, GQs, GQs2,
+  R1nams, R2nams, nams, H1, A, G, linkatlambda, simresults, powresults)
 }
 \arguments{
+\item{nsim}{number of simulations to run to calculate power}
+
+\item{seed}{set a seed for the power calculation, defaults to 2019}
+
 \item{mbeta}{mean coefficient for nonzero effects, defaults to 0}
 
 \item{kperc}{percentage of independent variables with nonzero signal, defaults to 40}
-
-\item{mc.cores}{number of cores to run simulation on}
-
-\item{rs}{investigator-specified set of "contrasts" of G, defaults to c(10, 20, 50)}
-
-\item{nsim}{number of simulations to run to calculate power}
 
 \item{n}{defaults to 100}
 
@@ -32,6 +30,10 @@ pstest(mbeta = 0, kperc = 40, mc.cores = 1, rs = c(10, 20, 50),
 
 \item{betasp}{indicator of presence of spatial information, defaults to TRUE}
 
+\item{rs}{investigator-specified set of "contrasts" of G, defaults to c(10, 20, 50)}
+
+\item{mc.cores}{number of cores to run simulation on}
+
 \item{Gprime}{parameter from sim_setup(), defaults to NULL}
 
 \item{GQs}{parameter from sim_setup(), defaults to NULL}
@@ -44,10 +46,6 @@ pstest(mbeta = 0, kperc = 40, mc.cores = 1, rs = c(10, 20, 50),
 
 \item{nams}{parameter from sim_setup(), defaults to NULL}
 
-\item{simresults}{empty dataframe from sim_setup(), defaults to NULL}
-
-\item{powresults}{empty dataframe from sim_setup(), defaults to NULL}
-
 \item{H1}{parameter from sim_setup(), defaults to NULL}
 
 \item{A}{parameter from sim_setup(), defaults to NULL}
@@ -55,9 +53,13 @@ pstest(mbeta = 0, kperc = 40, mc.cores = 1, rs = c(10, 20, 50),
 \item{G}{parameter from sim_setup(), defaults to NULL}
 
 \item{linkatlambda}{parameter from sim_setup(), defaults to NULL}
+
+\item{simresults}{empty dataframe from sim_setup(), defaults to NULL}
+
+\item{powresults}{empty dataframe from sim_setup(), defaults to NULL}
 }
 \value{
-A list of the entire matrix of simulation results, the power results, and "out"
+A list of the entire matrix of simulation results, the power results
 }
 \description{
 This is an independent function which calls setup from maxsum_altsim_setup.R,

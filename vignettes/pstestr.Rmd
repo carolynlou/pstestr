@@ -47,9 +47,47 @@ ncores = detectCores()
 pst_sim(mc.cores = ncores)
 ```
 
-If more control is desired for what exactly is run, the same simulations can be run with the following code:
+If more control is desired for what exactly is run, the same simulations can be run with the following code.
+
+
+Here, we set up the simulations with the default parameters, making sure to save the output matrices from the `sim_setup()` function for use in following steps. The main default parameters to be aware of are `nsim` and `seed`, where `nsim` will heavily affect runtime, and `seed` allows for reproducible results. Note that even if a seed is set outside of the function, the internal seed will still be automatically set to `2019`, so if a user wants to run this simulation under different random settings, the `seed` parameter in the function would have to be manually set. 
 
 ```{r}
-sim_setup()
+sobj = sim_setup(nsim = 500, seed = 2019,
+                     n = 100, p = 1000,
+                     model = 'normal',
+                     sigma = 1,
+                     rho = 0.9,
+                     rs = c(10, 20, 50))
+Gprime = sobj$Gprime
+GQs = sobj$GQs
+GQs2 = sobj$GQs2
+R1nams = sobj$R1nams
+R2nams = sobj$R2nams
+nams = sobj$nams
+simresults = sobj$simresults
+powresults = sobj$powresults
+H1 = sobj$H1
+A = sobj$A
+G = sobj$G
+linkatlambda = sobj$linkatlambda
 ```
+
+
+The following line of code runs the power calculation for the default parameters, with the default seed `2019`. To run across multiple parameter settings for `mbeta` and `kperc`, simply wrap in an `apply` statement or a for loop.
+
+```{r}
+pstest(nsim = 500, seed = 2019, mbeta = 0, kperc = 40,
+       n = 100, p = 1000, model = 'normal', sigma = 1,
+       alpha = 0.05, betasp = TRUE, rs = c(10, 20, 50), mc.cores = 1,
+       Gprime = Gprime, GQs = GQs,
+       GQs2 = GQs2, R1nams = R1nams, R2nams = R2nams,
+       nams = nams, H1 = H1,
+       A = A, G = G, linkatlambda = linkatlambda,
+       simresults = simresults,
+       powresults = powresults)
+```
+
+
+
 

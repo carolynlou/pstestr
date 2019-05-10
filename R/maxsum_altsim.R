@@ -6,28 +6,29 @@
 #' That function loops through the variables k and beta.
 #'
 #' @param nsim number of simulations to run to calculate power
+#' @param seed set a seed for the power calculation, defaults to 2019
 #' @param mbeta mean coefficient for nonzero effects, defaults to 0
 #' @param kperc percentage of independent variables with nonzero signal, defaults to 40
-#' @param mc.cores number of cores to run simulation on
+#' @param n defaults to 100
+#' @param p defaults to 1000
 #' @param model can be specified as 'normal' (default) for linear regression, otherwise does logistic regression
 #' @param sigma defaults to 1
 #' @param alpha significance level, defaults to 0.05
 #' @param betasp indicator of presence of spatial information, defaults to TRUE
 #' @param rs investigator-specified set of "contrasts" of G, defaults to c(10, 20, 50)
-#' @param n defaults to 100
-#' @param p defaults to 1000
+#' @param mc.cores number of cores to run simulation on
 #' @param Gprime parameter from sim_setup(), defaults to NULL
 #' @param GQs parameter from sim_setup(), defaults to NULL
 #' @param GQs2 parameter from sim_setup(), defaults to NULL
 #' @param R1nams parameter from sim_setup(), defaults to NULL
 #' @param R2nams parameter from sim_setup(), defaults to NULL
 #' @param nams parameter from sim_setup(), defaults to NULL
-#' @param simresults empty dataframe from sim_setup(), defaults to NULL
-#' @param powresults empty dataframe from sim_setup(), defaults to NULL
 #' @param H1 parameter from sim_setup(), defaults to NULL
 #' @param A parameter from sim_setup(), defaults to NULL
 #' @param G parameter from sim_setup(), defaults to NULL
 #' @param linkatlambda parameter from sim_setup(), defaults to NULL
+#' @param simresults empty dataframe from sim_setup(), defaults to NULL
+#' @param powresults empty dataframe from sim_setup(), defaults to NULL
 #'
 #' @import parallel
 #' @import foreach
@@ -36,22 +37,26 @@
 #' @importFrom utils capture.output
 #' @importFrom mvtnorm qmvnorm
 #' @importFrom iterators icount
-#' @return A list of the entire matrix of simulation results, the power results, and "out"
+#' @return A list of the entire matrix of simulation results, the power results
 #' @keywords projected score test
 #' @export
 
 
-pstest = function(mbeta = 0, kperc = 40, mc.cores = 1,
-                  rs = c(10, 20, 50),
-                  nsim = 500,
+pstest = function(nsim = 500, seed = 2019,
+                  mbeta = 0, kperc = 40,
                   n = 100, p = 1000,
-                  model = 'normal', sigma = 1,
-                  alpha = 0.05, betasp = TRUE,
+                  model = 'normal',
+                  sigma = 1,
+                  alpha = 0.05,
+                  betasp = TRUE,
+                  rs = c(10, 20, 50),
+                  mc.cores = 1,
                   Gprime, GQs,
                   GQs2, R1nams, R2nams,
-                  nams, simresults,
-                  powresults, H1,
-                  A, G, linkatlambda){
+                  nams, H1,
+                  A, G, linkatlambda,
+                  simresults,
+                  powresults){
   #print(mbeta)
   betas = seq(0, mbeta, length.out=kperc/2+1)[-1]
 
@@ -65,6 +70,7 @@ pstest = function(mbeta = 0, kperc = 40, mc.cores = 1,
   }
 
   #parallelize the simulations
+  set.seed(seed)
   cl = makeCluster(mc.cores)
   registerDoParallel(cl)
   r = foreach(icount(nsim), .combine = rbind, .packages = c("aSPU", "CompQuadForm")) %dopar% {

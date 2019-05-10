@@ -17,7 +17,7 @@
 #' @param betasp indicator of presence of spatial information, defaults to TRUE
 #' @param rs investigator-specified set of "contrasts" of G, defaults to c(10, 20, 50)
 #' @param mc.cores number of cores to run on, defaults to 1
-#' @param plot if TRUE, makes plots; if FALSE, does not. This produces one power plot per k across a range of mbetas
+#' @param doplot if TRUE, makes plots; if FALSE, does not. This produces one power plot per k across a range of mbetas
 #' @importFrom graphics legend plot points
 #' @return A data frame of power values for PST as well as aSPU, SKAT, and Sum for a range of mbetas and ks. Also plots the power curves.
 #'
@@ -36,10 +36,10 @@ pst_sim = function(nsim = 500,
                    betasp = TRUE,
                    rs = c(10, 20, 50),
                    mc.cores = 1,
-                   plot = TRUE){
+                   doplot = TRUE){
 
   sobj = sim_setup(n = n, p = p, model = model, sigma = sigma, nsim = nsim,
-                   seed = seed, rho = rho, betasp = betasp, rs = rs)
+                   seed = seed, rho = rho, rs = rs)
   Gprime = sobj$Gprime
   GQs = sobj$GQs
   GQs2 = sobj$GQs2
@@ -58,17 +58,16 @@ pst_sim = function(nsim = 500,
     lapply(mbetas, function(mbeta) {
         ks.out = lapply(ks, function(kperc) {
           #print(mbeta)
-          starttime = proc.time()
-          pstest(nsim = nsim, mbeta = mbeta, kperc = kperc,
+          pstest(nsim = nsim, seed = seed, mbeta = mbeta, kperc = kperc,
+                 n = n, p = p,
                  model = model, sigma = sigma, alpha = alpha, betasp = betasp,
                  rs = rs, mc.cores = mc.cores,
-                 n = n, p = p,
                  Gprime = Gprime, GQs = GQs,
                  GQs2 = GQs2, R1nams = R1nams, R2nams = R2nams,
-                 nams = nams, simresults = simresults,
-                 powresults = powresults, H1 = H1,
-                 A = A, G = G, linkatlambda = linkatlambda)
-          proc.time() - starttime
+                 nams = nams, H1 = H1,
+                 A = A, G = G, linkatlambda = linkatlambda,
+                 simresults = simresults,
+                 powresults = powresults)
         })
 
         ks.pow = data.frame(matrix(nrow = length(ks), ncol = 11))
@@ -80,7 +79,7 @@ pst_sim = function(nsim = 500,
   fullpow = do.call("rbind", results) #collapsing power results
 
   #makes plots for each k
-  if(plot == T){
+  if(doplot == TRUE){
     shapes = cbind(c(rep(1:2, each=length(rs)), rep(3, ncol(fullpow) - length(rs)*2) ), c(rep(1:length(rs), 2), 1:(ncol(fullpow) - length(rs)*2)) )
     for (i in 1:length(ks)){
 

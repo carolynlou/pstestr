@@ -2,14 +2,13 @@
 #' @description Support function for maxsum_altsim, which supports maxsum_simulations. Sets
 #' up objects needed to do power calculation. Not modifiable by user.
 #'
+#' @param nsim defaults to 500
+#' @param seed set a seed for the generation of matrices needed for the various tests, defaults to 2019
 #' @param n defaults to 100
 #' @param p defaults to 1000
 #' @param model can be specified as 'normal' (default) for linear regression, otherwise does logistic regression
 #' @param sigma defaults to 1
-#' @param nsim defaults to 500
-#' @param seed set a seed for the power calculation, defaults to 2019
 #' @param rho spatial correlation in G parameter, AR1 structure, defaults to 0.9
-#' @param betasp indicator of presence of spatial information, defaults to TRUE
 #' @param rs investigator-specified set of "contrasts" of G, defaults to c(10, 20, 50)
 #' @return A list including spatial correlation parameters, empty dataframes for simresults
 #'  and powresults, parameters for distribution of SKAT statistic
@@ -17,11 +16,11 @@
 #' @export
 
 
-sim_setup = function(nsim = 500, n = 100, p = 1000,
+sim_setup = function(nsim = 500, seed = 2019,
+                     n = 100, p = 1000,
                      model = 'normal',
                      sigma = 1,
-                     seed = 2019,
-                     rho = 0.9, betasp = 1,
+                     rho = 0.9,
                      rs = c(10, 20, 50)){
 
   set.seed(seed)

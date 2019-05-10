@@ -4,12 +4,13 @@
 \alias{sim_setup}
 \title{Sets up necessary parameters for power calculation simulation}
 \usage{
-sim_setup(nsim = 500, n = 100, p = 1000, model = "normal",
-  sigma = 1, seed = 2019, rho = 0.9, betasp = 1, rs = c(10, 20,
-  50))
+sim_setup(nsim = 500, seed = 2019, n = 100, p = 1000,
+  model = "normal", sigma = 1, rho = 0.9, rs = c(10, 20, 50))
 }
 \arguments{
 \item{nsim}{defaults to 500}
+
+\item{seed}{set a seed for the generation of matrices needed for the various tests, defaults to 2019}
 
 \item{n}{defaults to 100}
 
@@ -19,11 +20,7 @@ sim_setup(nsim = 500, n = 100, p = 1000, model = "normal",
 
 \item{sigma}{defaults to 1}
 
-\item{seed}{set a seed for the power calculation, defaults to 2019}
-
 \item{rho}{spatial correlation in G parameter, AR1 structure, defaults to 0.9}
-
-\item{betasp}{indicator of presence of spatial information, defaults to TRUE}
 
 \item{rs}{investigator-specified set of "contrasts" of G, defaults to c(10, 20, 50)}
 }
