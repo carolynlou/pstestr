@@ -155,7 +155,6 @@ pstest = function(nsim = 500, seed = 2019,
       message("There was an error regarding this iteration of the simulation. We are going to skip this iteration and move on to the next. R says: ")
       msg = conditionMessage(e)
       message(msg)
-      next
     }
     )
   }

@@ -88,6 +88,14 @@ pstest(nsim = 500, seed = 2019, mbeta = 0, kperc = 40,
        powresults = powresults)
 ```
 
+Sample output plot is shown below:
+
+```{r, echo = FALSE, eval = TRUE, out.width= '50%'}
+knitr::include_graphics("fign100.png")
+knitr::include_graphics("fign200.png")
+```
+
+
 
 
 
