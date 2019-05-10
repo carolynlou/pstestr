@@ -4,17 +4,25 @@
 \alias{pstest}
 \title{Performs the power analysis for the projected score test}
 \usage{
-pstest(nsim = 500, mbeta = 0, kperc = 40, model = "normal",
-  sigma = 1, alpha = 0.05, betasp = TRUE, rs = c(10, 20, 50),
-  mc.cores = 1, n = 100, p = 1000, Gprime, GQs, GQs2, R1nams, R2nams,
-  nams, simresults, powresults, H1, A, G, linkatlambda)
+pstest(mbeta = 0, kperc = 40, mc.cores = 1, rs = c(10, 20, 50),
+  nsim = 500, n = 100, p = 1000, model = "normal", sigma = 1,
+  alpha = 0.05, betasp = TRUE, Gprime, GQs, GQs2, R1nams, R2nams, nams,
+  simresults, powresults, H1, A, G, linkatlambda)
 }
 \arguments{
-\item{nsim}{number of simulations to run to calculate power}
-
 \item{mbeta}{mean coefficient for nonzero effects, defaults to 0}
 
 \item{kperc}{percentage of independent variables with nonzero signal, defaults to 40}
+
+\item{mc.cores}{number of cores to run simulation on}
+
+\item{rs}{investigator-specified set of "contrasts" of G, defaults to c(10, 20, 50)}
+
+\item{nsim}{number of simulations to run to calculate power}
+
+\item{n}{defaults to 100}
+
+\item{p}{defaults to 1000}
 
 \item{model}{can be specified as 'normal' (default) for linear regression, otherwise does logistic regression}
 
@@ -23,14 +31,6 @@ pstest(nsim = 500, mbeta = 0, kperc = 40, model = "normal",
 \item{alpha}{significance level, defaults to 0.05}
 
 \item{betasp}{indicator of presence of spatial information, defaults to TRUE}
-
-\item{rs}{investigator-specified set of "contrasts" of G, defaults to c(10, 20, 50)}
-
-\item{mc.cores}{number of cores to run simulation on}
-
-\item{n}{defaults to 100}
-
-\item{p}{defaults to 1000}
 
 \item{Gprime}{parameter from sim_setup(), defaults to NULL}
 

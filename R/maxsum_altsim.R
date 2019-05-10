@@ -8,12 +8,12 @@
 #' @param nsim number of simulations to run to calculate power
 #' @param mbeta mean coefficient for nonzero effects, defaults to 0
 #' @param kperc percentage of independent variables with nonzero signal, defaults to 40
+#' @param mc.cores number of cores to run simulation on
 #' @param model can be specified as 'normal' (default) for linear regression, otherwise does logistic regression
 #' @param sigma defaults to 1
 #' @param alpha significance level, defaults to 0.05
 #' @param betasp indicator of presence of spatial information, defaults to TRUE
 #' @param rs investigator-specified set of "contrasts" of G, defaults to c(10, 20, 50)
-#' @param mc.cores number of cores to run simulation on
 #' @param n defaults to 100
 #' @param p defaults to 1000
 #' @param Gprime parameter from sim_setup(), defaults to NULL
@@ -41,10 +41,12 @@
 #' @export
 
 
-pstest = function(nsim = 500, mbeta = 0, kperc = 40,
-                  model = 'normal', sigma = 1, alpha = 0.05, betasp = TRUE,
-                  rs = c(10, 20, 50), mc.cores = 1,
+pstest = function(mbeta = 0, kperc = 40, mc.cores = 1,
+                  rs = c(10, 20, 50),
+                  nsim = 500,
                   n = 100, p = 1000,
+                  model = 'normal', sigma = 1,
+                  alpha = 0.05, betasp = TRUE,
                   Gprime, GQs,
                   GQs2, R1nams, R2nams,
                   nams, simresults,
@@ -62,11 +64,10 @@ pstest = function(nsim = 500, mbeta = 0, kperc = 40,
   	beta[round(seq(10, 990, length.out=kperc))] = c(betas, betas) * c(-1, -1, 1, 1, -1,  1)
   }
 
-
   #parallelize the simulations
   cl = makeCluster(mc.cores)
-  registerDoParallel()
-  r = foreach(icount(nsim), .combine = rbind) %dopar% {
+  registerDoParallel(cl)
+  r = foreach(icount(nsim), .combine = rbind, .packages = c("aSPU", "CompQuadForm")) %dopar% {
       if(tolower(model)=='normal'){
       # Simulate Y under no covariates
       Y = Gprime %*% beta + rnorm(n, 0, sigma)
@@ -124,10 +125,6 @@ pstest = function(nsim = 500, mbeta = 0, kperc = 40,
       pvalueR12 = 1-pchisq(R1s2, df=rs)
     }
 
-    # unknown variance - needs to be scaled to smaller numbers for imhof to work
-    # hence dividing by sum(linkatlambda)
-
-    # value of adaptive test is not meaningful I think
     simresults = data.frame(NA)
     simresults[, R1nams] = c(R1s, pvalueR1)
     simresults[, R2nams] = c(R1s2, pvalueR12)
@@ -141,7 +138,6 @@ pstest = function(nsim = 500, mbeta = 0, kperc = 40,
   }
   stopCluster(cl)
   registerDoSEQ()
-
 
   simresults = as.data.frame(r)
   powresults[1,] = c(colMeans(simresults[,grep('_pvalue$', nams)]<=alpha, na.rm = T), kperc, mbeta)

@@ -17,10 +17,10 @@
 #' @export
 
 
-sim_setup = function(n = 100, p = 1000,
+sim_setup = function(nsim = 500, n = 100, p = 1000,
                      model = 'normal',
-                     sigma = 1, nsim = 500,
-                    seed = 2019,
+                     sigma = 1,
+                     seed = 2019,
                      rho = 0.9, betasp = 1,
                      rs = c(10, 20, 50)){
 

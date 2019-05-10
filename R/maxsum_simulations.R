@@ -58,6 +58,7 @@ pst_sim = function(nsim = 500,
     lapply(mbetas, function(mbeta) {
         ks.out = lapply(ks, function(kperc) {
           #print(mbeta)
+          starttime = proc.time()
           pstest(nsim = nsim, mbeta = mbeta, kperc = kperc,
                  model = model, sigma = sigma, alpha = alpha, betasp = betasp,
                  rs = rs, mc.cores = mc.cores,
@@ -67,6 +68,7 @@ pst_sim = function(nsim = 500,
                  nams = nams, simresults = simresults,
                  powresults = powresults, H1 = H1,
                  A = A, G = G, linkatlambda = linkatlambda)
+          proc.time() - starttime
         })
 
         ks.pow = data.frame(matrix(nrow = length(ks), ncol = 11))

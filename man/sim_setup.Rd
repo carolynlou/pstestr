@@ -4,11 +4,13 @@
 \alias{sim_setup}
 \title{Sets up necessary parameters for power calculation simulation}
 \usage{
-sim_setup(n = 100, p = 1000, model = "normal", sigma = 1,
-  nsim = 500, seed = 2019, rho = 0.9, betasp = 1, rs = c(10, 20,
+sim_setup(nsim = 500, n = 100, p = 1000, model = "normal",
+  sigma = 1, seed = 2019, rho = 0.9, betasp = 1, rs = c(10, 20,
   50))
 }
 \arguments{
+\item{nsim}{defaults to 500}
+
 \item{n}{defaults to 100}
 
 \item{p}{defaults to 1000}
@@ -16,8 +18,6 @@ sim_setup(n = 100, p = 1000, model = "normal", sigma = 1,
 \item{model}{can be specified as 'normal' (default) for linear regression, otherwise does logistic regression}
 
 \item{sigma}{defaults to 1}
-
-\item{nsim}{defaults to 500}
 
 \item{seed}{set a seed for the power calculation, defaults to 2019}
 

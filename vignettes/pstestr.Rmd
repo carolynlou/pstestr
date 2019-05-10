@@ -11,55 +11,45 @@ vignette: >
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
+  eval = FALSE,
   collapse = TRUE,
   comment = "#>"
 )
 ```
 
-Vignettes are long form documentation commonly included in packages. Because they are part of the distribution of the package, they need to be as compact as possible. The `html_vignette` output type provides a custom style sheet (and tweaks some options) to ensure that the resulting html is as small as possible. The `html_vignette` format:
+## Overview
 
-- Never uses retina figures
-- Has a smaller default figure size
-- Uses a custom CSS stylesheet instead of the default Twitter Bootstrap style
+The simulation in this package was one presented in [Vandekar et al. (2018)](https://www.tandfonline.com/doi/pdf/10.1080/01621459.2018.1448826?needAccess=true&) as part of a demonstration of the power results for the newly developed projected score test (PST), comparing it to the sequence kernel association test (SKAT), the adaptive sum of pwered scores test (aSPU), and the sum of powered scores test (SPU), specifically the plots in Figure 3. The paper presents a method to test the association of a single outcome with a high-dimensional variable such as an imaging or a genetic variable. Instead of using summary measures to test this association, which can result in underpowered subsequent tests used to localize an association, this method avoids this two-stage testing approach and directly identifies regions that are associated with an outcome of interest. Specifically, the authors propose a generalization of Rao's score test, which projects a score statistic onto a linear subspace of a high-dimensional parameter space. Here, the score statistics are projected to the subspace where the score test was performed, which allows inference in the high-dimensional space to be performed with the same degrees of freedom as the score test itself. This method has power that is competitive with other tests that do similar things. 
 
-## Vignette Info
 
-Note the various macros within the `vignette` section of the metadata block above. These are required in order to instruct R how to build the vignette. Note that you should change the `title` field and the `\VignetteIndexEntry` to match the title of your vignette.
+## Installation
 
-## Styles
-
-The `html_vignette` template includes a basic CSS theme. To override this theme you can specify your own CSS in the document metadata as follows:
-
-    output: 
-      rmarkdown::html_vignette:
-        css: mystyles.css
-
-## Figures
-
-The figure sizes have been customised so that you can easily put two images side-by-side. 
-
-```{r, fig.show='hold'}
-plot(1:10)
-plot(10:1)
+To install the package from github, type:
+```{r}
+devtools::install_github("carolynlou/pstestr")
 ```
 
-You can enable figure captions by `fig_caption: yes` in YAML:
+All dependencies of this package are imported with it.
 
-    output:
-      rmarkdown::html_vignette:
-        fig_caption: yes
 
-Then you can use the chunk option `fig.cap = "Your figure caption."` in **knitr**.
+## Tutorial
 
-## More Examples
+There is only one function that is required to run the entire simulation, and it is populated with default values for the parameters. This simulation runs quite slowly though, so here we show how to run it with and without parallelization:
 
-You can write math expressions, e.g. $Y = X\beta + \epsilon$, footnotes^[A footnote here.], and tables, e.g. using `knitr::kable()`.
-
-```{r, echo=FALSE, results='asis'}
-knitr::kable(head(mtcars, 10))
+Without parallelization: 
+```{r}
+pst_sim()
 ```
 
-Also a quote using `>`:
+With parallelization: 
+```{r}
+ncores = detectCores()
+pst_sim(mc.cores = ncores)
+```
 
-> "He who gives up [code] safety for [code] speed deserves neither."
-([via](https://twitter.com/hadleywickham/status/504368538874703872))
+If more control is desired for what exactly is run, the same simulations can be run with the following code:
+
+```{r}
+sim_setup()
+```
+
