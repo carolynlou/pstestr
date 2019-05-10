@@ -45,5 +45,5 @@ A data frame of power values for PST as well as aSPU, SKAT, and Sum for a range 
 \description{
 Conducts power analysis for PST along with several other methods
 for range of user-specified mbetas, ks, and ns. User uses this function to conduct
-simulation study. Offers option for parallelization
+simulation study. Offers option for parallelization. Wraps and combines results from sim_setup() and pstest()
 }

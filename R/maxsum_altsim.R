@@ -57,6 +57,8 @@ pstest = function(nsim = 500, seed = 2019,
                   A, G, linkatlambda,
                   simresults,
                   powresults){
+
+
   #print(mbeta)
   betas = seq(0, mbeta, length.out=kperc/2+1)[-1]
 
@@ -74,73 +76,88 @@ pstest = function(nsim = 500, seed = 2019,
   cl = makeCluster(mc.cores)
   registerDoParallel(cl)
   r = foreach(icount(nsim), .combine = rbind, .packages = c("aSPU", "CompQuadForm")) %dopar% {
+    tryCatch({
       if(tolower(model)=='normal'){
-      # Simulate Y under no covariates
-      Y = Gprime %*% beta + rnorm(n, 0, sigma)
-      # regress out mean
-      null.mod = lm(Y ~ 1)
-      X = model.matrix(null.mod)
-      H = X %*% solve(t(X) %*% X) %*% t(X)
-      Y0 = resid(null.mod)
-      # covariance structure for Y after removal of covariates.
-      # Based on fisher information.
-      sigmasqhat = sum(Y0^2)/(n-ncol(X))
-      Vtheta0 = sigmasqhat*(diag(n)-H)
+        # Simulate Y under no covariates
+        Y = Gprime %*% beta + rnorm(n, 0, sigma)
+        # regress out mean
+        null.mod = lm(Y ~ 1)
+        X = model.matrix(null.mod)
+        H = X %*% solve(t(X) %*% X) %*% t(X)
+        Y0 = resid(null.mod)
+        # covariance structure for Y after removal of covariates.
+        # Based on fisher information.
+        sigmasqhat = sum(Y0^2)/(n-ncol(X))
+        Vtheta0 = sigmasqhat*(diag(n)-H)
 
-    # else assume logistic regression
-    } else {
-      Y = rbinom(n, size=1, prob=1 - (1/(1 + exp(-Gprime %*% beta)) ) )
-      null.mod = glm(as.factor(Y) ~ 1, family='binomial')
-      X = model.matrix(null.mod)
-      Yhat = predict(null.mod, type='response')
+      # else assume logistic regression
+      } else {
 
-      Y0 = Y - Yhat
-      Vtheta0 = diag(Yhat*(1-Yhat))
-      XtVtheta0 = t(X) %*% Vtheta0
-      Vtheta0 = Vtheta0 - t(XtVtheta0) %*% solve( XtVtheta0 %*% X) %*% XtVtheta0
+          Y = rbinom(n, size=1, prob=1 - (1/(1 + exp(-Gprime %*% beta)) ) )
+          null.mod = glm(as.factor(Y) ~ 1, family='binomial')
+          X = model.matrix(null.mod)
+          Yhat = predict(null.mod, type='response')
 
-      A = svd(Vtheta0, nu=n, nv=0)
-      linkatlambda = svd( diag(sqrt(A$d)) %*% t(A$u) %*% Gprime, nu=0, nv=0)$d^2
+          Y0 = Y - Yhat
+          Vtheta0 = diag(Yhat*(1-Yhat))
+          XtVtheta0 = t(X) %*% Vtheta0
+          Vtheta0 = Vtheta0 - t(XtVtheta0) %*% solve( XtVtheta0 %*% X) %*% XtVtheta0
+
+          A = svd(Vtheta0, nu=n, nv=0)
+          linkatlambda = svd( diag(sqrt(A$d)) %*% t(A$u) %*% Gprime, nu=0, nv=0)$d^2
+      }
+
+      ### Estimation of R_1
+      R1s = sapply(GQs, function(gq) MaxSumEstimate(Y0, Vtheta0, gq)$Rmaxsum )
+      R1s2 = sapply(GQs2, function(gq) MaxSumEstimate(Y0, Vtheta0, gq)$Rmaxsum )
+
+      ### Estimation of SKAT
+      # same for continuous and categorical
+      #SKAT =  t(Y0) %*% Gprime %*% t(Gprime) %*% Y0
+
+      # adaptive SPU (Sum of Powered score (U?))
+      # I think you just have to scale Y maybe.
+      if(tolower(model) == 'normal'){
+        out = aSPU(Y, Gprime, cov=X, resample='perm', model='gaussian')
+      } else {
+        out = aSPU(Y, Gprime, cov=X, resample='perm', model='binomial')
+      }
+
+
+      if(tolower(model) == 'normal'){
+      # For normal data
+      # G is the rotated design after removing effects of covariates
+      pvalueR1 = sapply(1:length(rs), function(r) pratioqform(nrow(G), rs[r], R1s[r]) )
+      pvalueR12 = sapply(1:length(rs), function(r) pratioqform(nrow(G), rs[r], R1s2[r]) )
+      } else {
+        # asymptotic
+        pvalueR1 = 1-pchisq(R1s, df=rs)
+        pvalueR12 = 1-pchisq(R1s2, df=rs)
+      }
+
+      simresults = data.frame(NA)
+      simresults[, R1nams] = c(R1s, pvalueR1)
+      simresults[, R2nams] = c(R1s2, pvalueR12)
+      simresults[,c('aSPU', 'aSPU_pvalue')] = c(out$Ts['aSPU'], out$pvs['aSPU'])
+      simresults[,c('SKAT', 'SKAT_pvalue')] = c(out$Ts['SPU2'], out$pvs['SPU2'])
+      simresults[,c('Sum', 'Sum_pvalue')] = c(out$Ts['SPU1'], out$pvs['SPU1'])
+
+      simresults[,-1]
+
+      #if(! i %% 200) cat('done', i, '\n')
+
+    #error handling
+    }, warning = function(w){
+      message("There was a warning regarding this iteration of the simulation. R says: ")
+      msg = conditionMessage(w)
+      message(msg)
+    }, error = function(e){
+      message("There was an error regarding this iteration of the simulation. We are going to skip this iteration and move on to the next. R says: ")
+      msg = conditionMessage(e)
+      message(msg)
+      next
     }
-
-    ### Estimation of R_1
-    R1s = sapply(GQs, function(gq) MaxSumEstimate(Y0, Vtheta0, gq)$Rmaxsum )
-    R1s2 = sapply(GQs2, function(gq) MaxSumEstimate(Y0, Vtheta0, gq)$Rmaxsum )
-
-    ### Estimation of SKAT
-    # same for continuous and categorical
-    #SKAT =  t(Y0) %*% Gprime %*% t(Gprime) %*% Y0
-
-    # adaptive SPU (Sum of Powered score (U?))
-    # I think you just have to scale Y maybe.
-    if(tolower(model) == 'normal'){
-      out = aSPU(Y, Gprime, cov=X, resample='perm', model='gaussian')
-    } else {
-      out = aSPU(Y, Gprime, cov=X, resample='perm', model='binomial')
-    }
-
-
-    if(tolower(model) == 'normal'){
-    # For normal data
-    # G is the rotated design after removing effects of covariates
-    pvalueR1 = sapply(1:length(rs), function(r) pratioqform(nrow(G), rs[r], R1s[r]) )
-    pvalueR12 = sapply(1:length(rs), function(r) pratioqform(nrow(G), rs[r], R1s2[r]) )
-    } else {
-      # asymptotic
-      pvalueR1 = 1-pchisq(R1s, df=rs)
-      pvalueR12 = 1-pchisq(R1s2, df=rs)
-    }
-
-    simresults = data.frame(NA)
-    simresults[, R1nams] = c(R1s, pvalueR1)
-    simresults[, R2nams] = c(R1s2, pvalueR12)
-    simresults[,c('aSPU', 'aSPU_pvalue')] = c(out$Ts['aSPU'], out$pvs['aSPU'])
-    simresults[,c('SKAT', 'SKAT_pvalue')] = c(out$Ts['SPU2'], out$pvs['SPU2'])
-    simresults[,c('Sum', 'Sum_pvalue')] = c(out$Ts['SPU1'], out$pvs['SPU1'])
-
-    simresults[,-1]
-
-    #if(! i %% 200) cat('done', i, '\n')
+    )
   }
   stopCluster(cl)
   registerDoSEQ()
@@ -148,6 +165,7 @@ pstest = function(nsim = 500, seed = 2019,
   simresults = as.data.frame(r)
   powresults[1,] = c(colMeans(simresults[,grep('_pvalue$', nams)]<=alpha, na.rm = T), kperc, mbeta)
   powresults = as.data.frame(powresults)
+
 
 
   return(list("simresults" = simresults, "powresults" = powresults))

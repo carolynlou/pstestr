@@ -62,7 +62,7 @@ pstest(nsim = 500, seed = 2019, mbeta = 0, kperc = 40, n = 100,
 A list of the entire matrix of simulation results, the power results
 }
 \description{
-This is an independent function which calls setup from maxsum_altsim_setup.R,
+This is an independent function which calls setup from sim_setup(),
 which sets up all of the variables needed for one value of kperc, percentage of independent variables with nonzero signal
 and one value of mbeta, mean coefficient for non zero effects uniform around that value
 That function loops through the variables k and beta.

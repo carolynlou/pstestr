@@ -80,7 +80,9 @@ pst_sim = function(nsim = 500,
 
   #makes plots for each k
   if(doplot == TRUE){
+    #pdffile = paste('n', n, '_p', p, '_model', model, '_sigma', sigma, '_nsim', nsim, '_alpha', alpha, '_rho', rho, '_seed', seed, '.pdf', sep='' )
     shapes = cbind(c(rep(1:2, each=length(rs)), rep(3, ncol(fullpow) - length(rs)*2) ), c(rep(1:length(rs), 2), 1:(ncol(fullpow) - length(rs)*2)) )
+    #pdf(pdffile, height=6, width=8)
     for (i in 1:length(ks)){
 
       k = ks[i]

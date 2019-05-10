@@ -29,6 +29,6 @@ A list including spatial correlation parameters, empty dataframes for simresults
  and powresults, parameters for distribution of SKAT statistic
 }
 \description{
-Support function for maxsum_altsim, which supports maxsum_simulations. Sets
-up objects needed to do power calculation. Not modifiable by user.
+Support function for pstest(), which runs the power calculations that are wrapped in pst_sim(). Sets
+up objects needed to do power calculation.
 }
