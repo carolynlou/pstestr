@@ -165,8 +165,6 @@ pstest = function(nsim = 500, seed = 2019,
   powresults[1,] = c(colMeans(simresults[,grep('_pvalue$', nams)]<=alpha, na.rm = T), kperc, mbeta)
   powresults = as.data.frame(powresults)
 
-
-
   return(list("simresults" = simresults, "powresults" = powresults))
 
 }
